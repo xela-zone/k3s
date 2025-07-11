@@ -43,8 +43,10 @@ spec:
       volumes:
         - name: google-creds-volume
           secret:
-            secretName: google-creds
-            # This 'items' block is the required change
+            # This is the secret created by your OnePasswordItem
+            secretName: app-secrets
             items:
-              - key: google-service-account.json # The actual key in the secret
-                path: GOOGLE_SERVICE_ACCOUNT.json  # The filename you want in the pod
+              # This tells Kubernetes to grab the 'gcp_json' key from the secret...
+              - key: gcp_json
+                # ...and mount it as a file with this name.
+                path: GOOGLE_SERVICE_ACCOUNT.json
