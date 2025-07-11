@@ -21,11 +21,10 @@ spec:
       # The endpoint URL from your 'endpoint' custom field
       endpointURL: "https://s3.us-west-004.backblazeb2.com"
 
-      # Reference the secret created by your OnePasswordItem
-      s3Credentials:
-        name: backblaze-app-key-secret
-        # This tells Barman to use the key named 's3config' from the secret
-        key: s3config
+    # Use 'credential' to reference a secret containing an .s3cfg file
+    credential:
+      name: backblaze-app-key-secret
+      key: s3config
 
       # Schedule for full base backups (e.g., daily at 5:00 AM UTC)
       fullBackup:
