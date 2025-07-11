@@ -1,0 +1,23 @@
+# root-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # This is the name of your one and only "root" application
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # This points to your Git repository
+    repoURL: 'https://github.com/xela-zone/k3s.git' # <-- CHANGE THIS
+    # This is the path to the folder that contains your other app definitions
+    path: argo-cd # <-- This points to the folder we're talking about
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    # This app's resources will be created in the 'argocd' namespace
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
