@@ -7,3 +7,32 @@ spec:
   instances: 1
   storage:
     size: 10Gi
+
+  backup:
+    # Set your desired retention policy (e.g., 14 days)
+    retentionPolicy: "14d"
+
+    # Configure Barman to use your B2 bucket
+    barmanObjectStore:
+      # The s3:// URL to your bucket and a folder for backups
+      # Using 'k3s-backup-7cabee' from your 1Password notes
+      destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
+
+      # The endpoint URL from your 'endpoint' custom field
+      endpointURL: "https://s3.us-west-004.backblazeb2.com"
+
+      # Reference the secret created by your OnePasswordItem
+      s3Credentials:
+        name: backblaze-app-key-secret
+        # This tells Barman to use the key named 's3config' from the secret
+        key: s3config
+
+      # Schedule for full base backups (e.g., daily at 5:00 AM UTC)
+      fullBackup:
+        schedule: "0 5 * * *"
+
+      # Enable compression to save on storage
+      wal:
+        compression: "gzip"
+      data:
+        compression: "gzip"
