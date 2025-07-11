@@ -46,5 +46,5 @@ spec:
             secretName: google-creds
             # This 'items' block is the required change
             items:
-              - key: google-service-account-json # The actual key in the secret
+              - key: google-service-account.json # The actual key in the secret
                 path: GOOGLE_SERVICE_ACCOUNT.json  # The filename you want in the pod
