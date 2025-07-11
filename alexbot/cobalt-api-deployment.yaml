@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: cobalt-api
+  name: cobalt-api
+  namespace: alexbot
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - env:
+            - name: API_URL
+              value: http://cobalt-api:9000/
+          image: ghcr.io/imputnet/cobalt:10
+          name: cobalt-api
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+      restartPolicy: Always

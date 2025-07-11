@@ -1,6 +1,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
+  namespace: alexbot
   name: database
 spec:
   instances: 1
