@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-secret-reader
+  namespace: alexbot
+rules:
+- apiGroups: [""]
+  # The type of resource this rule applies to
+  resources: ["secrets"]
+  # The specific name of the secret we are granting access to
+  resourceNames: ["cnpg-b2-credentials"]
+  # The actions that are allowed on that specific secret
+  verbs: ["get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-secret-reader-binding
+  namespace: alexbot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cnpg-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: database

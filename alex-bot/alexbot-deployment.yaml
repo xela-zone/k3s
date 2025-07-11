@@ -1,0 +1,46 @@
+# main-app-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # The name of your main application's deployment
+  name: alex-bot
+  namespace: alexbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alex-bot
+  template:
+    metadata:
+      labels:
+        app: alex-bot
+    spec:
+      containers:
+        - name: main-app-container
+          # The Docker image for your main application
+          image: ghcr.io/xela-zone/alex-bot:latest
+          env:
+            # --- This variable tells your app where to find Cobalt ---
+            - name: COBALT_URL
+              value: http://cobalt-api:9000
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-app
+                  key: uri
+          envFrom:
+            # --- This block loads all your secrets ---
+            - secretRef:
+                # Loads the other secrets you created
+                name: app-secrets
+          # --- This block mounts your Google JSON key as a file ---
+          volumeMounts:
+            - name: google-creds-volume
+              mountPath: "/alexbot/GOOGLE_SERVICE_ACCOUNT.json"
+              subPath: "GOOGLE_SERVICE_ACCOUNT.json"
+              readOnly: true
+      # --- This defines the volume that holds the secret data ---
+      volumes:
+        - name: google-creds-volume
+          secret:
+            secretName: google-creds
