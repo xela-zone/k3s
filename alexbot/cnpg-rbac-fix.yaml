@@ -8,7 +8,7 @@ rules:
   # The type of resource this rule applies to
   resources: ["secrets"]
   # The specific name of the secret we are granting access to
-  resourceNames: ["cnpg-b2-credentials"]
+  resourceNames: ["backblaze-app-key-secret"]
   # The actions that are allowed on that specific secret
   verbs: ["get", "watch"]
 ---
