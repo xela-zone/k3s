@@ -14,7 +14,13 @@ spec:
     targetRevision: 1.76.1
     helm:
       values: |
-        {}
+        operator:
+          oauth:
+            # We are using the default secret name, but we still need to
+            # map the keys from our 1Password item.
+            # secretName: operator-oauth # This line is optional since it's the default
+            clientIDKey: username
+            clientSecretKey: password
   destination:
     server: https://kubernetes.default.svc
     namespace: tailscale
