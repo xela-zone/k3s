@@ -29,10 +29,6 @@ spec:
         secretAccessKey:
           name: backblaze-app-key-secret # The secret created by your 1PasswordItem
           key: password # The App Key from your 1P item
-      # Schedule for full base backups (e.g., daily at 5:00 AM UTC)
-
-      fullBackup:
-        schedule: "0 5 * * *"
 
       # Enable compression to save on storage
       wal:

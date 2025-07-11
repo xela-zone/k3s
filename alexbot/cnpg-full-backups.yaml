@@ -1,0 +1,16 @@
+# cnpg-schedule.yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: database-daily-backup
+  namespace: alexbot
+spec:
+  # This is the cron schedule for your full backups
+  schedule: "0 5 * * *"
+
+  # This ensures the backups are deleted if the cluster is ever deleted
+  backupOwnerReference: cluster
+
+  # This links the schedule to your CNPG cluster
+  cluster:
+    name: database
