@@ -21,12 +21,16 @@ spec:
       # The endpoint URL from your 'endpoint' custom field
       endpointURL: "https://s3.us-west-004.backblazeb2.com"
 
-    # Use 'credential' to reference a secret containing an .s3cfg file
-    credential:
-      name: backblaze-app-key-secret
-      key: s3config
-
+ # This block provides the credentials in the format CNPG requires
+      s3Credentials:
+        accessKeyId:
+          name: backblaze-app-key-secret # The secret created by your 1PasswordItem
+          key: username # The Key ID from your 1P item
+        secretAccessKey:
+          name: backblaze-app-key-secret # The secret created by your 1PasswordItem
+          key: password # The App Key from your 1P item
       # Schedule for full base backups (e.g., daily at 5:00 AM UTC)
+      
       fullBackup:
         schedule: "0 5 * * *"
 
