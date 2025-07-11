@@ -1,0 +1,37 @@
+# traefik-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # This is the name of the ArgoCD application itself
+  name: traefik
+  namespace: argocd
+  # Add a finalizer so that the Traefik resources are deleted if you delete this app
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # The official Traefik Helm chart repository
+    repoURL: https://helm.traefik.io/traefik
+    chart: traefik
+    # Pinning to a specific version is best practice
+    targetRevision: v26.0.0
+    helm:
+      # These values are a great starting point for Traefik
+      values: |
+        # Enable the Kubernetes Ingress provider
+        providers:
+          kubernetesIngress:
+            enabled: true
+        # We will add more configuration here later for Tailscale
+  destination:
+    server: https://kubernetes.default.svc
+    # The namespace where Traefik will be installed
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      # This will automatically create the 'traefik' namespace for you
+      - CreateNamespace=true
