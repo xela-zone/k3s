@@ -1,0 +1,26 @@
+# k3s/argo-cd/tailscale-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tailscale
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # This points to the directory containing the Tailscale configuration
+    repoURL: https://github.com/xela-zone/k3s.git # Use your repo URL
+    path: tailscale
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    # The 'tailscale' namespace will be created by the child app
+    namespace: tailscale
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      # This will automatically create the 'tailscale' namespace for you
+      - CreateNamespace=true
