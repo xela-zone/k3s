@@ -4,7 +4,7 @@ metadata:
   namespace: alexbot
   name: database
 spec:
-  instances: 3
+  instances: 1
   storage:
     size: 10Gi
 
