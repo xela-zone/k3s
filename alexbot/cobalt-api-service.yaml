@@ -9,5 +9,4 @@ spec:
       port: 9000
       targetPort: 9000
   selector:
-    matchLabel:
-      service: cobalt-api
+    service: cobalt-api
