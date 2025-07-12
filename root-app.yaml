@@ -11,8 +11,10 @@ spec:
     # This points to your Git repository
     repoURL: 'https://github.com/xela-zone/k3s.git' # <-- CHANGE THIS
     # This is the path to the folder that contains your other app definitions
-    path: argo-cd # <-- This points to the folder we're talking about
+    path: apps # <-- This points to the folder we're talking about
     targetRevision: HEAD
+    directory:
+      recurse: true
   destination:
     server: 'https://kubernetes.default.svc'
     # This app's resources will be created in the 'argocd' namespace

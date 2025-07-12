@@ -23,7 +23,11 @@ spec:
         providers:
           kubernetesIngress:
             enabled: true
-        # We will add more configuration here later for Tailscale
+      
+      service:
+        annotations:
+          # This tells the Tailscale operator to expose the service
+          "tailscale.com/expose": "true"
   destination:
     server: https://kubernetes.default.svc
     # The namespace where Traefik will be installed
