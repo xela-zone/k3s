@@ -20,7 +20,14 @@ spec:
           config:
             # Example: Disable the built-in admin user after setting up SSO
             "admin.enabled": "false"
-
+          extraArgs:
+            - --insecure
+          service:
+            type: LoadBalancer
+            annotations:
+              "tailscale.com/expose": "true"
+              "tailscale.com/hostname": "argo"
+              "tailscale.com/tags": "tag:deployment"
   # Destination is the same cluster and namespace where Argo CD is running
   destination:
     server: https://kubernetes.default.svc
