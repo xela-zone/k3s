@@ -1,0 +1,23 @@
+# k3s/argo-cd/argo-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo
+  namespace: argocd
+  annotations:
+    tailscale.com/hostname: "argo"
+    tailscale.com/tags: "tag:deployment"
+    # Use the proxy class to ensure port 443 is active
+    tailscale.com/proxy-class: "https-proxy"
+spec:
+  ingressClassName: tailscale
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 80

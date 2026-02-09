@@ -9,5 +9,3 @@ spec:
         env:
           - name: TS_HTTPS_PORT
             value: "443"
-          - name: TS_DEST_IP
-            value: "10.43.169.34"
