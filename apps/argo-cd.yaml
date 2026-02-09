@@ -18,7 +18,6 @@ spec:
         # For example, you can add extra config, manage projects, etc.
         server:
           config:
-            # Example: Disable the built-in admin user after setting up SSO
             "admin.enabled": "false"
           extraArgs:
             - --insecure
