@@ -27,6 +27,7 @@ spec:
           annotations:
             # This tells the Tailscale operator to expose the service
             "tailscale.com/expose": "true"
+            "tailscale.com/hostname": "traefik"
   destination:
     server: https://kubernetes.default.svc
     # The namespace where Traefik will be installed
