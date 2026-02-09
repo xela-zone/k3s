@@ -13,8 +13,7 @@ spec:
   # Use the Tailscale Ingress controller directly
   ingressClassName: tailscale
   rules:
-  - host: argo
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
@@ -22,4 +21,4 @@ spec:
           service:
             name: argocd-server
             port:
-              name: http
+              number: 80
