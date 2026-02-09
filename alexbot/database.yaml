@@ -1,0 +1,61 @@
+# CloudNativePG Database Configuration
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  namespace: alexbot
+  name: database
+spec:
+  instances: 1
+  storage:
+    size: 10Gi
+  backup:
+    retentionPolicy: "14d"
+    barmanObjectStore:
+      destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
+      endpointURL: "https://s3.us-west-004.backblazeb2.com"
+      s3Credentials:
+        accessKeyId:
+          name: backblaze-app-key-secret
+          key: username
+        secretAccessKey:
+          name: backblaze-app-key-secret
+          key: password
+      wal:
+        compression: "gzip"
+      data:
+        compression: "gzip"
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: database-daily-backup
+  namespace: alexbot
+spec:
+  schedule: "0 5 * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: database
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-secret-reader
+  namespace: alexbot
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["backblaze-app-key-secret"]
+  verbs: ["get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-secret-reader-binding
+  namespace: alexbot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cnpg-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: database

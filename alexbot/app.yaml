@@ -1,0 +1,101 @@
+# alex-bot and cobalt-api workloads
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alex-bot
+  namespace: alexbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alex-bot
+  template:
+    metadata:
+      labels:
+        app: alex-bot
+    spec:
+      containers:
+        - name: main-app-container
+          image: ghcr.io/xela-zone/alex-bot:latest
+          env:
+            - name: COBALT_URL
+              value: http://cobalt-api:9000
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-app
+                  key: uri
+          envFrom:
+            - secretRef:
+                name: app-secrets
+          volumeMounts:
+            - name: google-creds-volume
+              mountPath: "/alexbot/GOOGLE_SERVICE_ACCOUNT.json"
+              subPath: "GOOGLE_SERVICE_ACCOUNT.json"
+              readOnly: true
+      volumes:
+        - name: google-creds-volume
+          secret:
+            secretName: app-secrets
+            items:
+              - key: gcp_json
+                path: GOOGLE_SERVICE_ACCOUNT.json
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cobalt-api
+  namespace: alexbot
+  labels:
+    service: cobalt-api
+spec:
+  selector:
+    matchLabels:
+      service: cobalt-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: cobalt-api
+    spec:
+      containers:
+        - name: cobalt-api
+          image: ghcr.io/imputnet/cobalt:10
+          env:
+            - name: API_URL
+              value: http://cobalt-api:9000/
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cobalt-api
+  namespace: alexbot
+spec:
+  ports:
+    - name: "9000"
+      port: 9000
+      targetPort: 9000
+  selector:
+    service: cobalt-api
