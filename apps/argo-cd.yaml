@@ -26,6 +26,7 @@ spec:
             type: LoadBalancer
             annotations:
               "tailscale.com/expose": "true"
+              "tailscale.com/https": "true"
               "tailscale.com/hostname": "argo"
               "tailscale.com/tags": "tag:deployment"
   # Destination is the same cluster and namespace where Argo CD is running
