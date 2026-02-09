@@ -19,9 +19,10 @@ spec:
             - --insecure
           config:
             "admin.enabled": "false"
-                    service:
-                      type: ClusterIP
-            # Destination is the same cluster and namespace where Argo CD is running
+          service:
+            type: ClusterIP
+
+  # Destination is the same cluster and namespace where Argo CD is running
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
