@@ -13,7 +13,7 @@ spec:
   # Use the Tailscale Ingress controller directly
   ingressClassName: tailscale
   rules:
-  - host: argo.moose-amberjack.ts.net
+  - host: argo
     http:
       paths:
       - path: /
