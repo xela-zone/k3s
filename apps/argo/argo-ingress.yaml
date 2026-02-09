@@ -7,12 +7,14 @@ metadata:
   annotations:
     tailscale.com/hostname: "argo"
     tailscale.com/tags: "tag:deployment"
-    # Use the proxy class to ensure port 443 is active
-    tailscale.com/proxy-class: "https-proxy"
 spec:
   ingressClassName: tailscale
+  tls:
+  - hosts:
+    - argo.moose-amberjack.ts.net
   rules:
-  - http:
+  - host: argo.moose-amberjack.ts.net
+    http:
       paths:
       - path: /
         pathType: Prefix
