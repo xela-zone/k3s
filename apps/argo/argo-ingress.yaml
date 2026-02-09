@@ -6,6 +6,7 @@ metadata:
   namespace: argocd
   annotations:
     tailscale.com/hostname: "argo"
+    tailscale.com/https: "true"
     tailscale.com/tags: "tag:deployment"
 spec:
   ingressClassName: tailscale
