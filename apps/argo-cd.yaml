@@ -14,13 +14,11 @@ spec:
     targetRevision: 7.8.2 # Pinning to a specific version for consistency
     helm:
       values: |
-        # All of Argo CD's configuration can be managed here
-        # For example, you can add extra config, manage projects, etc.
         server:
-          config:
-            "admin.enabled": "false"
           extraArgs:
             - --insecure
+          config:
+            "admin.enabled": "false"
           service:
             type: LoadBalancer
             annotations:
@@ -28,6 +26,7 @@ spec:
               "tailscale.com/https": "true"
               "tailscale.com/hostname": "argo"
               "tailscale.com/tags": "tag:deployment"
+
   # Destination is the same cluster and namespace where Argo CD is running
   destination:
     server: https://kubernetes.default.svc
