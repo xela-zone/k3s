@@ -21,6 +21,12 @@ spec:
             # secretName: operator-oauth # This line is optional since it's the default
             clientIDKey: username
             clientSecretKey: password
+          # Explicitly set the tags for the operator and managed nodes
+          hostname: tailscale-operator
+          logging: info
+        proxyConfig:
+          defaultTags:
+            - tag:deployment
   destination:
     server: https://kubernetes.default.svc
     namespace: tailscale
