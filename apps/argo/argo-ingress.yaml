@@ -5,22 +5,21 @@ metadata:
   name: argocd-server-ingress
   namespace: argocd
   annotations:
-    # This tells Traefik that the ArgoCD service communicates over HTTPS
-    traefik.ingress.kubernetes.io/protocol: "https"
+    # This tells the Tailscale operator what MagicDNS name to use
+    tailscale.com/hostname: "argo"
+    # This ensures it matches your ACL rules
+    tailscale.com/tags: "tag:deployment"
 spec:
-  # This ensures your Traefik controller handles this Ingress
-  ingressClassName: traefik
+  # Use the Tailscale Ingress controller directly
+  ingressClassName: tailscale
   rules:
-    # The MagicDNS hostname you want to use
-  - host: traefik.moose-amberjack.ts.net
+  - host: argo.moose-amberjack.ts.net
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            # The name of the Argo CD server service
             name: argocd-server
             port:
-              # The HTTPS port for the Argo CD UI
               name: https
