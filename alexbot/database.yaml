@@ -28,7 +28,7 @@ spec:
   backup:
     retentionPolicy: "14d"
     barmanObjectStore:
-      destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
+      destinationPath: "s3://k3s-backup-7cabee/alex-bot-database-v2/"
       endpointURL: "https://s3.us-west-004.backblazeb2.com"
       s3Credentials:
         accessKeyId:
