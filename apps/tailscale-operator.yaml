@@ -1,4 +1,4 @@
-# k3s/tailscale/tailscale-operator.yaml
+# k3s/apps/tailscale-operator.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -16,18 +16,12 @@ spec:
       values: |
         operator:
           oauth:
-            # We are using the default secret name, but we still need to
-            # map the keys from our 1Password item.
-            # secretName: operator-oauth # This line is optional since it's the default
             clientIDKey: username
             clientSecretKey: password
-          # Explicitly set the tags for the operator and managed nodes
-          loginServer: ""
           hostname: tailscale-operator
           logging: info
         proxyConfig:
-          defaultTags:
-            - tag:deployment
+          defaultTags: "tag:deployment"
   destination:
     server: https://kubernetes.default.svc
     namespace: tailscale
