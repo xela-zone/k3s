@@ -22,6 +22,7 @@ spec:
             clientIDKey: username
             clientSecretKey: password
           # Explicitly set the tags for the operator and managed nodes
+          loginServer: ""
           hostname: tailscale-operator
           logging: info
         proxyConfig:
