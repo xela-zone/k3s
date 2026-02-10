@@ -7,25 +7,6 @@ metadata:
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
-  bootstrap:
-    recovery:
-      source: &backupSource databaseBackup
-      recoveryTarget:
-        targetTime: "2026-02-09T23:10:00Z"
-  externalClusters:
-    - name: *backupSource
-      barmanObjectStore:
-        destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
-        endpointURL: "https://s3.us-west-004.backblazeb2.com"
-        s3Credentials:
-          accessKeyId:
-            name: backblaze-app-key-secret
-            key: username
-          secretAccessKey:
-            name: backblaze-app-key-secret
-            key: password
-        wal:
-          compression: "gzip"
   storage:
     size: 10Gi
   backup:
