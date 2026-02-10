@@ -9,13 +9,6 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   storage:
     size: 10Gi
-  plugins:
-    - name: barman-cloud
-      parameters:
-        objectStore: backblaze-b2-store
-        serverName: database
-  backup:
-    retentionPolicy: "14d"
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
