@@ -6,6 +6,23 @@ metadata:
   name: database
 spec:
   instances: 1
+  bootstrap:
+    recovery:
+      source: &backupSource databaseBackup
+  externalClusters:
+    - name: *backupSource
+      barmanObjectStore:
+        destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
+        endpointURL: "https://s3.us-west-004.backblazeb2.com"
+        s3Credentials:
+          accessKeyId:
+            name: backblaze-app-key-secret
+            key: username
+          secretAccessKey:
+            name: backblaze-app-key-secret
+            key: password
+        wal:
+          compression: "gzip"
   storage:
     size: 10Gi
   backup:
