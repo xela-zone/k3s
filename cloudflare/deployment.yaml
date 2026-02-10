@@ -25,4 +25,4 @@ spec:
           valueFrom:
             secretKeyRef:
               name: cloudflare-tunnel-token
-              key: token # 1Password operator maps the field name to the secret key
+              key: TUNNEL_TOKEN # 1Password operator maps the field name to the secret key
