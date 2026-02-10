@@ -11,7 +11,7 @@ spec:
     recovery:
       source: &backupSource databaseBackup
       recoveryTarget:
-        backupID: "20260209T230500"
+        targetTime: "2026-02-09T23:10:00Z"
   externalClusters:
     - name: *backupSource
       barmanObjectStore:
