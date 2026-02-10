@@ -9,22 +9,13 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   storage:
     size: 10Gi
+  plugins:
+    - name: barman-cloud
+      parameters:
+        objectStore: backblaze-b2-store
+        serverName: database
   backup:
     retentionPolicy: "14d"
-    barmanObjectStore:
-      destinationPath: "s3://k3s-backup-7cabee/alex-bot-database-v2/"
-      endpointURL: "https://s3.us-west-004.backblazeb2.com"
-      s3Credentials:
-        accessKeyId:
-          name: backblaze-app-key-secret
-          key: username
-        secretAccessKey:
-          name: backblaze-app-key-secret
-          key: password
-      wal:
-        compression: "gzip"
-      data:
-        compression: "gzip"
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
