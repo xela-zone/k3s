@@ -14,12 +14,12 @@ spec:
       secretAccessKey:
         name: backblaze-app-key-secret
         key: password
-  wal:
-    compression: gzip
-    maxParallel: 1
-  data:
-    compression: gzip
-    jobs: 2
+    wal:
+      compression: gzip
+      maxParallel: 1
+    data:
+      compression: gzip
+      jobs: 2
   retentionPolicy: "30d"
   instanceSidecarConfiguration:
     resources:
