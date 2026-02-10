@@ -15,7 +15,6 @@ spec:
   externalClusters:
     - name: *backupSource
       barmanObjectStore:
-        serverName: cloud
         destinationPath: "s3://k3s-backup-7cabee/alex-bot-database/"
         endpointURL: "https://s3.us-west-004.backblazeb2.com"
         s3Credentials:
