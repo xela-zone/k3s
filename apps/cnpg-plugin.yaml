@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://cloudnative-pg.github.io/charts
     chart: plugin-barman-cloud
-    targetRevision: 0.5.0 # Check for latest version, using 0.5.0 from search result
+    targetRevision: 0.11.0
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system # Must be same as operator
