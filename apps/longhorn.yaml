@@ -16,7 +16,7 @@ spec:
         persistence:
           defaultClass: true
         defaultSettings:
-          backupTarget: s3://k3s-backup-7cabee/longhorn-backup/
+          backupTarget: s3://k3s-backup-7cabee@us-west-004/longhorn-backup/
           backupTargetCredentialSecret: longhorn-backup-secret
           replicaAutoBalance: "least-effort"
           defaultReplicaCount: 1 # Set replica count to 1 for single-node deployments
