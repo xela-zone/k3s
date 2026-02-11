@@ -19,8 +19,8 @@ spec:
           backupTarget: s3://k3s-backup-7cabee@us-west-004/longhorn-backup/
           backupTargetCredentialSecret: longhorn-backup-secret
           replicaAutoBalance: "least-effort"
-          defaultReplicaCount: 1 # Set replica count to 1 for single-node deployments
-          createDefaultDiskAndNode: true # Ensure default disk and node are created
+          defaultReplicaCount: 1
+          createDefaultDiskAndNode: true
         preUpgradeChecker:
           jobEnabled: false
         s3:

@@ -97,3 +97,4 @@ The 1Password operator in this cluster (v1.11.0+) creates Kubernetes Secrets whe
 *   **Field Mapping:** Do NOT attempt to use `spec.data` in `OnePasswordItem` or complex sync hooks for field remapping. The operator version/CRD might not support it reliably.
 *   **Best Practice:** If an application requires specific secret keys (e.g., `AWS_ACCESS_KEY_ID`), ask the user to rename the fields directly in the 1Password item to match the required keys.
 *   **Longhorn S3 Backups:** Require `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINTS`, and `AWS_REGION` keys in the secret. The `backupTarget` URL should also follow the format `s3://bucket@region/path/`.
+*   **Longhorn Replicas:** Since this is a single-node cluster, all volumes MUST be configured with `numberOfReplicas: 1`. The global `defaultReplicaCount` is also set to `1`.
