@@ -21,6 +21,8 @@ spec:
           replicaAutoBalance: "least-effort"
           defaultReplicaCount: 1 # Set replica count to 1 for single-node deployments
           createDefaultDiskAndNode: true # Ensure default disk and node are created
+        preUpgradeChecker:
+          jobEnabled: false
         s3:
           endpoint: https://s3.us-west-004.backblazeb2.com
         serviceAccount:
