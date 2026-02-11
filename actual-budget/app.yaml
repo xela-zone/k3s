@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: actual-data-new
+  name: actual-data
   namespace: actual-budget
   labels:
     # Pick up automated S3 backups
@@ -38,6 +38,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
+  # THIS IS THE KEY: We force it to bind to our stable named PV
   volumeName: actual-budget-data
 ---
 apiVersion: apps/v1
@@ -78,7 +79,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: actual-data-new
+            claimName: actual-data
 ---
 apiVersion: v1
 kind: Service
