@@ -1,0 +1,3 @@
+# Custom values for the Longhorn Helm chart.
+# These values will override the defaults from the chart.
+# For more information, see the official Longhorn Helm chart documentation.
