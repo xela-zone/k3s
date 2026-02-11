@@ -15,6 +15,7 @@ spec:
       values: |
         persistence:
           defaultClass: true
+          defaultClassReplicaCount: 1
         defaultSettings:
           backupTarget: s3://k3s-backup-7cabee@us-west-004/longhorn-backup/
           backupTargetCredentialSecret: longhorn-backup-secret
