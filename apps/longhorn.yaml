@@ -23,6 +23,9 @@ spec:
           createDefaultDiskAndNode: true # Ensure default disk and node are created
         s3:
           endpoint: https://s3.us-west-004.backblazeb2.com
+        serviceAccount:
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
