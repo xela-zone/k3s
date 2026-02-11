@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: actual-budget
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/xela-zone/k3s.git
+    path: actual-budget
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: actual-budget
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
