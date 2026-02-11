@@ -1,0 +1,16 @@
+apiVersion: longhorn.io/v1beta2
+kind: Volume
+metadata:
+  name: actual-budget-data
+  namespace: longhorn-system
+  labels:
+    recurring-job-group.longhorn.io/default: enabled
+spec:
+  accessMode: rwo
+  backupBlockSize: "2097152"
+  backupCompressionMethod: lz4
+  backupTargetName: default
+  dataEngine: v1
+  frontend: blockdev
+  numberOfReplicas: 1
+  size: "10737418240"
