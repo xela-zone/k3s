@@ -1,0 +1,27 @@
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily-backup
+  namespace: longhorn-system
+spec:
+  cron: "0 3 * * *" # Run at 3 AM daily
+  task: "backup"    # Options: snapshot, backup, snapshot-delete, backup-cleanup
+  groups:
+  - default         # Volumes with the 'default' group will run this job
+  retain: 7         # Keep 7 daily backups
+  concurrency: 1
+  labels:
+    daily: "true"
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: hourly-snapshot
+  namespace: longhorn-system
+spec:
+  cron: "0 * * * *" # Run every hour
+  task: "snapshot"
+  groups:
+  - default
+  retain: 24        # Keep 24 hours of snapshots
+  concurrency: 2
