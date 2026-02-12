@@ -31,6 +31,15 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
 
 ## Patterns & Templates
 
+### Storage & Longhorn Patterns
+
+*   **Disabling Default Backups:** To prevent Longhorn from applying the default recurring backup jobs (e.g., for databases managed by CNPG/Barman), you must assign the volume to a specific recurring job group that *excludes* the backup jobs.
+    *   *Mechanism:* Create a recurring job (e.g., `weekly-trim`) and assign it to a group (e.g., `disabled`).
+    *   *StorageClass:* Set `recurringJobSelector: '[{"name":"disabled", "isGroup":true}]'` in the StorageClass parameters.
+    *   *Why:* Simply setting `recurringJobs: '[]'` is often overridden by Longhorn's global default group setting.
+*   **Filesystem Trim:** A `weekly-trim` recurring job (task: `filesystem-trim`) is configured for both `default` and `disabled` groups to ensure disk space is reclaimed regularly.
+*   **StorageClass Updates:** StorageClass parameters are **immutable**. If you need to change them (e.g., updating `recurringJobSelector`), you must **delete the StorageClass** manually and let Argo CD recreate it. Argo CD sync will fail with "Forbidden: updates to parameters" otherwise.
+
 ### Adding a New Application with Tailscale Ingress
 
 To add a new workload and expose it at `custom-name.moose-amberjack.ts.net`:
@@ -66,6 +75,10 @@ To add a new workload and expose it at `custom-name.moose-amberjack.ts.net`:
     ```
 
 ## Troubleshooting & Learnings
+
+### CloudNativePG (CNPG) & Barman
+*   **"Expected empty archive" Error:** If `barman-cloud-wal-archive` fails with this error, it means the destination S3 bucket path is not empty or has conflicting metadata.
+    *   **Fix:** Increment the destination path suffix (e.g., from `.../db-v2` to `.../db-v3`) in the `ObjectStore` or `Cluster` configuration to force a fresh archive start.
 
 ### Naming Collisions (Tailscale)
 If a new node shows up as `name-1` instead of `name`, it means an old machine record exists in the Tailscale Admin Console. 
