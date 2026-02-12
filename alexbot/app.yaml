@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: main-app-container
-          image: ghcr.io/xela-zone/alex-bot:latest
+          image: ghcr.io/xela-zone/alex-bot:latest@sha256:785a6e77bf57a17a3326b1f297f0e06405c356465890cc302e603116495473c2
           env:
             - name: COBALT_URL
               value: http://cobalt-api:9000
@@ -60,7 +60,7 @@ spec:
     spec:
       containers:
         - name: cobalt-api
-          image: ghcr.io/imputnet/cobalt:10
+          image: ghcr.io/imputnet/cobalt:10@sha256:e5d3fff05a0a5a24ef31b034736fa5075ba45bdb051da1910b84be1c7798f5b4
           env:
             - name: API_URL
               value: http://cobalt-api:9000/
