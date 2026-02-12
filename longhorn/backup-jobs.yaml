@@ -32,9 +32,9 @@ metadata:
   name: placeholder-job
   namespace: longhorn-system
 spec:
-  cron: "0 0 1 2 *" # Run once a year on Feb 1st
-  task: "snapshot"
+  cron: "0 0 * * 0" # Run at midnight on Sunday
+  task: "filesystem-trim"
   groups:
   - disabled
-  retain: 1
+  retain: 0
   concurrency: 1
