@@ -15,6 +15,12 @@
         "digest"
       ],
       "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "ghcr.io/xela-zone/alex-bot"
+      ],
+      "pinDigests": false
     }
   ],
   "kubernetes": {
