@@ -14,14 +14,16 @@
         "pin",
         "digest"
       ],
-      "automerge": true
+      "automerge": true,
+      "ignoreTests": true
     },
     {
       "matchPackageNames": [
         "ghcr.io/xela-zone/alex-bot"
       ],
       "pinDigests": true,
-      "automerge": true
+      "automerge": true,
+      "ignoreTests": true
     }
   ],
   "kubernetes": {
@@ -33,5 +35,6 @@
     "fileMatch": [
       "apps/.+\\.yaml$"
     ]
-  }
+  },
+  "platformAutomerge": true
 }
