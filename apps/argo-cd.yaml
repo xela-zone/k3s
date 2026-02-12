@@ -11,11 +11,12 @@ spec:
     targetRevision: 9.4.1
     helm:
       values: |
-        server:
-          extraArgs:
-            - --insecure
-          config:
+        configs:
+          cm:
             admin.enabled: "false"
+          params:
+            server.insecure: "true"
+        server:
           service:
             type: ClusterIP
   destination:
