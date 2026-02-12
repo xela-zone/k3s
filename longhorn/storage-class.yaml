@@ -12,3 +12,4 @@ parameters:
   fromBackup: ""
   fsType: "ext4"
   recurringJobSelector: '[]'
+  recurringJobs: '[]'
