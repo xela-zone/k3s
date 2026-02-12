@@ -13,9 +13,16 @@ spec:
       values: |
         configs:
           cm:
-            admin.enabled: "false"
+            # Enable anonymous access
+            "users.anonymous.enabled": "true"
+            # Explicitly disable admin user to prevent confusion
+            "admin.enabled": "false"
+          rbac:
+            # Grant admin privileges to the anonymous user
+            "policy.default": "role:admin"
           params:
-            server.insecure: "true"
+            # Insecure mode (disable TLS on the API server pod itself)
+            "server.insecure": "true"
         server:
           service:
             type: ClusterIP
