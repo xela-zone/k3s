@@ -8,14 +8,15 @@ spec:
   source:
     repoURL: https://argoproj.github.io/argo-helm
     chart: argo-cd
-    targetRevision: 7.9.1
+    targetRevision: 9.4.1
     helm:
       values: |
-        server:
-          extraArgs:
-            - --insecure
-          config:
+        configs:
+          cm:
             admin.enabled: "false"
+          params:
+            server.insecure: "true"
+        server:
           service:
             type: ClusterIP
   destination:
