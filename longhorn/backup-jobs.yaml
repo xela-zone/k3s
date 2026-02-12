@@ -29,12 +29,13 @@ spec:
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: placeholder-job
+  name: weekly-trim
   namespace: longhorn-system
 spec:
   cron: "0 0 * * 0" # Run at midnight on Sunday
   task: "filesystem-trim"
   groups:
   - disabled
+  - default
   retain: 0
   concurrency: 1
