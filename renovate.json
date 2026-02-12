@@ -20,7 +20,8 @@
       "matchPackageNames": [
         "ghcr.io/xela-zone/alex-bot"
       ],
-      "pinDigests": false
+      "pinDigests": true,
+      "automerge": true
     }
   ],
   "kubernetes": {
