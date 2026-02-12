@@ -25,3 +25,16 @@ spec:
   - default
   retain: 24        # Keep 24 hours of snapshots
   concurrency: 2
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: placeholder-job
+  namespace: longhorn-system
+spec:
+  cron: "0 0 1 2 *" # Run once a year on Feb 1st
+  task: "snapshot"
+  groups:
+  - disabled
+  retain: 1
+  concurrency: 1
