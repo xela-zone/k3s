@@ -60,7 +60,7 @@ spec:
     spec:
       containers:
         - name: cobalt-api
-          image: ghcr.io/imputnet/cobalt:10@sha256:e5d3fff05a0a5a24ef31b034736fa5075ba45bdb051da1910b84be1c7798f5b4
+          image: ghcr.io/imputnet/cobalt:11@sha256:01637bc0ae6668f132f66b2dd992fc71865b7373ff483a406afa81d679118fc0
           env:
             - name: API_URL
               value: http://cobalt-api:9000/
