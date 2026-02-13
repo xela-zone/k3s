@@ -72,7 +72,7 @@ data:
           access_key_id: "ACCESS_KEY_PLACEHOLDER"
           secret_access_key: "SECRET_KEY_PLACEHOLDER"
           prefix: "media/"
-          public_baseurl: "https://assets.kbrt.xyz/media/"
+          public_baseurl: "https://assets.kbrt.xyz/"
 
     # --- Metrics ---
     enable_metrics: true
