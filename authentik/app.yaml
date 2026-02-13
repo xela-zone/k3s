@@ -12,27 +12,57 @@ spec:
     helm:
       values: |
         fullnameOverride: authentik
-        authentik:
-          # postgresql and email can use file:///
-          postgresql:
-            host: authentik-db-rw.authentik.svc
-            name: authentik
-            user: file:///postgres-creds/username
-            password: file:///postgres-creds/password
-          
-          email:
-            host: "file:///authentik-secrets/smtp_host"
-            from: "file:///authentik-secrets/smtp_from"
-            username: "file:///authentik-secrets/smtp_username"
-            password: "file:///authentik-secrets/smtp_password"
-            port: 465
-            use_ssl: true
         
+        # Disable bundled components
         redis:
           enabled: false
         postgresql:
           enabled: false
         
+        authentik:
+          # Use global env vars for everything to ensure bootstrap sees them
+          postgresql:
+            host: authentik-db-rw.authentik.svc
+            name: authentik
+            user: authentik
+          
+          email:
+            port: 465
+            use_ssl: true
+
+        global:
+          env:
+            - name: AUTHENTIK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: secret_key
+            - name: AUTHENTIK_POSTGRESQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-db-app
+                  key: password
+            - name: AUTHENTIK_EMAIL__HOST
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: smtp_host
+            - name: AUTHENTIK_EMAIL__FROM
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: smtp_from
+            - name: AUTHENTIK_EMAIL__USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: smtp_username
+            - name: AUTHENTIK_EMAIL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: smtp_password
+
         server:
           ingress:
             enabled: true
@@ -46,52 +76,6 @@ spec:
             tls:
               - hosts:
                   - id.kbrt.xyz
-          
-          # Use environment variable for secret_key as it might not support file:///
-          env:
-            - name: AUTHENTIK_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: authentik-secrets
-                  key: secret_key
-          
-          volumes:
-            - name: postgres-creds
-              secret:
-                secretName: authentik-db-app
-            - name: authentik-secrets
-              secret:
-                secretName: authentik-secrets
-          volumeMounts:
-            - name: postgres-creds
-              mountPath: /postgres-creds
-              readOnly: true
-            - name: authentik-secrets
-              mountPath: /authentik-secrets
-              readOnly: true
-
-        worker:
-          env:
-            - name: AUTHENTIK_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: authentik-secrets
-                  key: secret_key
-          
-          volumes:
-            - name: postgres-creds
-              secret:
-                secretName: authentik-db-app
-            - name: authentik-secrets
-              secret:
-                secretName: authentik-secrets
-          volumeMounts:
-            - name: postgres-creds
-              mountPath: /postgres-creds
-              readOnly: true
-            - name: authentik-secrets
-              mountPath: /authentik-secrets
-              readOnly: true
 
   destination:
     server: https://kubernetes.default.svc
