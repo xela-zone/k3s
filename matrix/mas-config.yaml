@@ -29,6 +29,7 @@ data:
           client_secret: "CLIENT_SECRET_PLACEHOLDER"
           scope: "openid profile email"
           discovery_mode: oidc
+          token_endpoint_auth_method: client_secret_post
 
     # Matrix Homeserver Integration
     matrix:
