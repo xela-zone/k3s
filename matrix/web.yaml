@@ -50,6 +50,7 @@ metadata:
   name: element-web
   namespace: matrix
 spec:
+  ingressClassName: traefik
   rules:
   - host: chat.kbrt.xyz
     http:

@@ -168,6 +168,7 @@ metadata:
   name: matrix
   namespace: matrix
 spec:
+  ingressClassName: traefik
   rules:
   - host: matrix.kbrt.xyz
     http:
