@@ -35,6 +35,7 @@ spec:
                   issuer_url: "https://id.kbrt.xyz/application/o/garage-ui/"
                   client_id: "$OIDC_CLIENT_ID"
                   client_secret: "$OIDC_CLIENT_SECRET"
+                  scopes: ["openid", "profile"]
                   # Automatically generated redirect URL: root_url + /auth/oidc/callback
               EOF
           env:
