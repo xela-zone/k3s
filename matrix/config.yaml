@@ -46,8 +46,9 @@ data:
     experimental_features:
       msc3861:
         enabled: true
-        issuer: http://mas.matrix.svc.cluster.local:8080/
-        client_auth_method: none
+        issuer: http://10.43.69.87:8080/
+        client_auth_method: client_secret_post
+        client_secret: "MACAROON_SECRET_PLACEHOLDER"
 
     # --- Media (S3) ---
     media_store_path: /data/media_store
