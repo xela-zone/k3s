@@ -24,13 +24,10 @@ spec:
               CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
               CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
               ENC_KEY=$(cat /secrets/matrix/MAS_ENCRYPTION_KEY)
-              # Reuse Macaroon secret as the shared secret
               SHARED_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
               
-              # Copy template
               cp /config-template/config.yaml /data/config.yaml
               
-              # Substitute
               sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/config.yaml
               sed -i "s|CLIENT_ID_PLACEHOLDER|$CLIENT_ID|g" /data/config.yaml
               sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/config.yaml
@@ -50,6 +47,8 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
+          # Explicitly set command and args
+          command: ["mas-cli"]
           args: ["server", "--config", "/data/config.yaml"]
           ports:
             - containerPort: 8080

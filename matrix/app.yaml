@@ -24,9 +24,8 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              pip install --upgrade pip
               pip install --target /modules boto3 tqdm
-              pip install --target /modules --no-deps matrix-synapse-s3-storage-provider
+              pip install --target /modules https://github.com/matrix-org/synapse-s3-storage-provider/archive/refs/tags/v1.5.0.tar.gz
 
         # 2. Build Config (Substitutions)
         - name: config-builder
