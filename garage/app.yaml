@@ -38,8 +38,7 @@ spec:
               mountPath: /etc/garage/rpc_secret
               subPath: rpc_secret
           readinessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: 3900
             initialDelaySeconds: 5
             periodSeconds: 10
