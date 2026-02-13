@@ -35,6 +35,7 @@ data:
       homeserver: "http://matrix.matrix.svc:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
-    # Encryption keys (injected)
+    # Encryption keys
     secrets:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
+      session: "SESSION_SECRET_PLACEHOLDER"

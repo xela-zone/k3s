@@ -24,6 +24,7 @@ spec:
               CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
               CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
               ENC_KEY=$(cat /secrets/matrix/MAS_ENCRYPTION_KEY)
+              # Reuse Macaroon secret for shared, session, etc.
               SHARED_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
               
               cp /config-template/config.yaml /data/config.yaml
@@ -33,6 +34,7 @@ spec:
               sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/config.yaml
               sed -i "s|ENCRYPTION_KEY_PLACEHOLDER|$ENC_KEY|g" /data/config.yaml
               sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
+              sed -i "s|SESSION_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
 
           volumeMounts:
             - name: config-template
@@ -47,7 +49,6 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
-          # Explicitly set command and args
           command: ["mas-cli"]
           args: ["server", "--config", "/data/config.yaml"]
           ports:
@@ -60,7 +61,7 @@ spec:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 15
             periodSeconds: 30
 
       volumes:
@@ -75,17 +76,3 @@ spec:
         - name: db-secret
           secret:
             secretName: matrix-db-app
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mas
-  namespace: matrix
-spec:
-  ports:
-    - port: 8080
-      targetPort: 8080
-      name: http
-  selector:
-    app: mas
