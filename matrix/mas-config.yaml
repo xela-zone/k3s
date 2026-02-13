@@ -33,9 +33,7 @@ data:
 
     # Matrix Homeserver Integration
     matrix:
-      homeserver:
-        base_url: "http://matrix.matrix.svc:80"
-        server_name: "matrix.kbrt.xyz"
+      homeserver: "http://matrix.matrix.svc:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"  # Synapse and MAS share this
 
     # Encryption keys (injected)
