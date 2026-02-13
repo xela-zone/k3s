@@ -50,7 +50,7 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
-          args: ["/data/config.yaml"]
+          args: ["run", "--config", "/data/config.yaml"]
           ports:
             - containerPort: 8080
               name: http
