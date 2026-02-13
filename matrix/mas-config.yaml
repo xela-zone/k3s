@@ -33,7 +33,7 @@ data:
 
     # Matrix Homeserver Integration
     matrix:
-      homeserver: "http://matrix.matrix.svc:80"
+      homeserver: "http://matrix.matrix.svc.cluster.local:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
     # Encryption keys
