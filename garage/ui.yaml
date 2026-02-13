@@ -30,6 +30,9 @@ spec:
               server:
                 host: "0.0.0.0"
                 port: 3000
+                environment: "development"
+                domain: "garage-ui.kbrt.xyz"
+                protocol: "https"
                 root_url: "https://garage-ui.kbrt.xyz"
               garage:
                 endpoint: "http://garage.garage.svc:3900"
@@ -46,6 +49,7 @@ spec:
                   cookie_same_site: "lax"
                   cookie_domain: "garage-ui.kbrt.xyz"
                   tls_skip_verify: true
+                  skip_issuer_check: true
               next_auth:
                 secret: "$NEXTAUTH_SECRET"
               EOF
