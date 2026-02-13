@@ -1,0 +1,33 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backblaze-b2-store
+  namespace: authentik
+spec:
+  configuration:
+    # IMPORTANT: Unique path for Authentik to avoid clobbering alex-bot's backups
+    destinationPath: "s3://k3s-backup-7cabee/authentik-database-v1/"
+    endpointURL: "https://s3.us-west-004.backblazeb2.com"
+    s3Credentials:
+      accessKeyId:
+        name: backblaze-app-key-secret
+        key: username
+      secretAccessKey:
+        name: backblaze-app-key-secret
+        key: password
+    wal:
+      compression: gzip
+      maxParallel: 1
+    data:
+      compression: gzip
+      jobs: 2
+  retentionPolicy: "30d"
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+    retentionPolicyIntervalSeconds: 3600
