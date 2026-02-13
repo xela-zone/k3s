@@ -41,8 +41,6 @@ data:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
 
     # Clients (Element Web, Element X, etc.)
-    # MAS manages clients dynamically, but we can pre-seed if needed.
-    # Usually, we don't need to define them here if discovery works.
     clients:
-      - client_id: 00000000-0000-0000-0000-000000000000
+      - client_id: 01HCGY0Z10896D686D746D746D
         client_auth_method: none
