@@ -9,6 +9,11 @@ data:
     http:
       address: 0.0.0.0:8080
       public_base: https://matrix.kbrt.xyz/
+      cors:
+        allowed_origins:
+          - "https://chat.kbrt.xyz"
+          - "https://element.io" # Standard Element Web
+          - "https://develop.element.io"
 
     # Database connection
     database:
