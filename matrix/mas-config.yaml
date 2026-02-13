@@ -28,16 +28,13 @@ data:
           client_id: "CLIENT_ID_PLACEHOLDER"
           client_secret: "CLIENT_SECRET_PLACEHOLDER"
           scope: "openid profile email"
-          # Discovery mode usually works, but explicit endpoints are safer if discovery fails
           discovery_mode: oidc
 
     # Matrix Homeserver Integration
     matrix:
       homeserver: "http://matrix.matrix.svc:80"
-      secret: "MAS_SHARED_SECRET_PLACEHOLDER"  # Synapse and MAS share this
+      secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
-# Encryption keys (injected)
-secrets:
-  encryption: "ENCRYPTION_KEY_PLACEHOLDER"
-
-# End of config
+    # Encryption keys (injected)
+    secrets:
+      encryption: "ENCRYPTION_KEY_PLACEHOLDER"

@@ -74,7 +74,7 @@ spec:
         # --- Synapse ---
         - name: synapse
           image: matrixdotorg/synapse:latest
-          args: ["start"]
+          args: ["run"]
           env:
             - name: PYTHONPATH
               value: "/modules"
