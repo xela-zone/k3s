@@ -172,6 +172,13 @@ spec:
     http:
       paths:
       # MAS Routes
+      - path: /.well-known/openid-configuration
+        pathType: Prefix
+        backend:
+          service:
+            name: mas
+            port:
+              number: 8080
       - path: /_matrix/oidc
         pathType: Prefix
         backend:
