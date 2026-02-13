@@ -37,8 +37,8 @@ spec:
                 admin_endpoint: "http://garage.garage.svc:3903"
                 admin_token: "$RPC_SECRET"
               auth:
-                # Use the nextauth_secret as a stable signing key
-                jwt_private_key: "$NEXTAUTH_SECRET"
+                # Leave empty to auto-generate a key on startup
+                jwt_private_key: ""
                 oidc:
                   enabled: true
                   provider_name: "Authentik"
