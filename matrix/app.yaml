@@ -20,7 +20,7 @@ spec:
       initContainers:
         # 1. Install S3 Provider Module
         - name: install-s3-lib
-          image: python:3.11
+          image: matrixdotorg/synapse:latest
           command: ["/bin/sh", "-c"]
           args:
             - |
