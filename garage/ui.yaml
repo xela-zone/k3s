@@ -20,6 +20,12 @@ spec:
             - sh
             - -c
             - |
+              # Read secrets from files to avoid shell escaping issues
+              RPC_SECRET=$(cat /secrets/rpc_secret)
+              CLIENT_ID=$(cat /secrets/oidc_client_id)
+              CLIENT_SECRET=$(cat /secrets/oidc_client_secret)
+              NEXTAUTH_SECRET=$(cat /secrets/nextauth_secret)
+              
               cat <<EOF > /config/config.yaml
               server:
                 host: "0.0.0.0"
@@ -28,35 +34,23 @@ spec:
               garage:
                 endpoint: "http://garage.garage.svc:3900"
                 admin_endpoint: "http://garage.garage.svc:3903"
-                admin_token: "$GARAGE_RPC_SECRET"
+                admin_token: "$RPC_SECRET"
               auth:
                 oidc:
                   enabled: true
                   issuer_url: "https://id.kbrt.xyz/application/o/garage-ui/"
-                  client_id: "$OIDC_CLIENT_ID"
-                  client_secret: "$OIDC_CLIENT_SECRET"
+                  client_id: "$CLIENT_ID"
+                  client_secret: "$CLIENT_SECRET"
                   scopes: ["openid", "profile"]
-                  # Automatically generated redirect URL: root_url + /auth/oidc/callback
+              next_auth:
+                secret: "$NEXTAUTH_SECRET"
               EOF
-          env:
-            - name: GARAGE_RPC_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: garage-secrets
-                  key: rpc_secret
-            - name: OIDC_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: garage-secrets
-                  key: oidc_client_id
-            - name: OIDC_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: garage-secrets
-                  key: oidc_client_secret
           volumeMounts:
             - name: config-volume
               mountPath: /config
+            - name: secrets-mount
+              mountPath: /secrets
+              readOnly: true
       containers:
         - name: garage-ui
           image: noooste/garage-ui:latest
@@ -77,6 +71,9 @@ spec:
       volumes:
         - name: config-volume
           emptyDir: {}
+        - name: secrets-mount
+          secret:
+            secretName: garage-secrets
 ---
 apiVersion: v1
 kind: Service
