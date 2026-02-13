@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mas-config
+  namespace: matrix
+data:
+  config.yaml: |
+    # HTTP listener
+    http:
+      address: 0.0.0.0:8080
+      public_base: https://matrix.kbrt.xyz/
+
+    # Database connection
+    database:
+      uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
+
+    # Telemetry
+    telemetry:
+      tracing:
+        enabled: false
+
+    # Upstream Identity Provider (Authentik)
+    upstream_oauth2:
+      providers:
+        - id: authentik
+          human_name: "Authentik"
+          issuer: "https://id.kbrt.xyz/application/o/matrix/"
+          client_id: "CLIENT_ID_PLACEHOLDER"
+          client_secret: "CLIENT_SECRET_PLACEHOLDER"
+          scope: "openid profile email"
+          # Discovery mode usually works, but explicit endpoints are safer if discovery fails
+          discovery_mode: oidc
+
+    # Matrix Homeserver Integration
+    matrix:
+      homeserver:
+        base_url: "http://matrix.matrix.svc:80"
+        server_name: "matrix.kbrt.xyz"
+      secret: "MAS_SHARED_SECRET_PLACEHOLDER"  # Synapse and MAS share this
+
+    # Encryption keys (injected)
+    secrets:
+      encryption: "ENCRYPTION_KEY_PLACEHOLDER"
+
+    # Clients (Element Web, Element X, etc.)
+    # MAS manages clients dynamically, but we can pre-seed if needed.
+    # Usually, we don't need to define them here if discovery works.
+    clients:
+      - client_id: 00000000-0000-0000-0000-000000000000
+        client_auth_method: none

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mas
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mas
+  template:
+    metadata:
+      labels:
+        app: mas
+    spec:
+      initContainers:
+        - name: config-builder
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Read secrets
+              DB_PASS=$(cat /secrets/db/password)
+              CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
+              CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
+              ENC_KEY=$(cat /secrets/matrix/MAS_ENCRYPTION_KEY)
+              # Reuse Macaroon secret as the shared secret
+              SHARED_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
+              
+              # Copy template
+              cp /config-template/config.yaml /data/config.yaml
+              
+              # Substitute
+              sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/config.yaml
+              sed -i "s|CLIENT_ID_PLACEHOLDER|$CLIENT_ID|g" /data/config.yaml
+              sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/config.yaml
+              sed -i "s|ENCRYPTION_KEY_PLACEHOLDER|$ENC_KEY|g" /data/config.yaml
+              sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
+
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: generated-config
+              mountPath: /data
+            - name: matrix-secrets
+              mountPath: /secrets/matrix
+            - name: db-secret
+              mountPath: /secrets/db
+
+      containers:
+        - name: mas
+          image: ghcr.io/matrix-org/matrix-authentication-service:latest
+          args: ["/data/config.yaml"]
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: generated-config
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+
+      volumes:
+        - name: config-template
+          configMap:
+            name: mas-config
+        - name: generated-config
+          emptyDir: {}
+        - name: matrix-secrets
+          secret:
+            secretName: matrix-secrets
+        - name: db-secret
+          secret:
+            secretName: matrix-db-app
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mas
+  namespace: matrix
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app: mas

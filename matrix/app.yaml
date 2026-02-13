@@ -14,7 +14,7 @@ spec:
         app: matrix-synapse
     spec:
       securityContext:
-        fsGroup: 991 # Synapse user
+        fsGroup: 991
         fsGroupChangePolicy: "OnRootMismatch"
 
       initContainers:
@@ -25,9 +25,6 @@ spec:
           args:
             - |
               pip install --target /modules matrix-synapse-s3-storage-provider
-              # Also install postgres/psycopg2 dependencies if needed by the provider?
-              # The provider mainly needs boto3 (installed by pip).
-              # Main synapse container has the native postgres libs.
           volumeMounts:
             - name: python-modules
               mountPath: /modules
@@ -42,20 +39,16 @@ spec:
               DB_PASS=$(cat /secrets/db/password)
               REG_SECRET=$(cat /secrets/matrix/SYNAPSE_REGISTRATION_SHARED_SECRET)
               MAC_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
-              CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
-              CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
               S3_ACCESS=$(cat /secrets/s3/AWS_ACCESS_KEY_ID)
               S3_SECRET=$(cat /secrets/s3/AWS_SECRET_ACCESS_KEY)
               
               # Copy template
               cp /config-template/homeserver.yaml /data/homeserver.yaml
               
-              # Substitute (using | as delimiter to avoid collision with / in urls/keys)
+              # Substitute
               sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/homeserver.yaml
               sed -i "s|REGISTRATION_SECRET_PLACEHOLDER|$REG_SECRET|g" /data/homeserver.yaml
               sed -i "s|MACAROON_SECRET_PLACEHOLDER|$MAC_SECRET|g" /data/homeserver.yaml
-              sed -i "s|CLIENT_ID_PLACEHOLDER|$CLIENT_ID|g" /data/homeserver.yaml
-              sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/homeserver.yaml
               sed -i "s|ACCESS_KEY_PLACEHOLDER|$S3_ACCESS|g" /data/homeserver.yaml
               sed -i "s|SECRET_KEY_PLACEHOLDER|$S3_SECRET|g" /data/homeserver.yaml
               
@@ -115,11 +108,6 @@ spec:
             - name: SYNCV3_SERVER
               value: "http://localhost:8008"
             - name: SYNCV3_DB
-              # Reusing the synapse DB for simplicity (different tables)
-              # NOTE: We must construct the connection string using the mounted secret
-              # We can't use valueFrom here easily because we need to interpolate the password.
-              # Hack: Use a shell to start it? Or trusted auth?
-              # Let's use the 'command' override to source the password.
               value: "postgres://synapse:$(DB_PASSWORD)@matrix-db-rw.matrix.svc/synapse?sslmode=disable"
             - name: SYNCV3_SECRET
               valueFrom:
@@ -183,6 +171,37 @@ spec:
   - host: matrix.kbrt.xyz
     http:
       paths:
+      # MAS Routes
+      - path: /_matrix/oidc
+        pathType: Prefix
+        backend:
+          service:
+            name: mas
+            port:
+              number: 8080
+      - path: /_matrix/client/v3/login
+        pathType: Prefix
+        backend:
+          service:
+            name: mas
+            port:
+              number: 8080
+      - path: /_matrix/client/v3/logout
+        pathType: Prefix
+        backend:
+          service:
+            name: mas
+            port:
+              number: 8080
+      - path: /_matrix/client/v3/refresh
+        pathType: Prefix
+        backend:
+          service:
+            name: mas
+            port:
+              number: 8080
+      
+      # Synapse Routes
       - path: /
         pathType: Prefix
         backend:
@@ -190,7 +209,8 @@ spec:
             name: matrix
             port:
               number: 80
-      # Route sliding sync requests
+      
+      # Sliding Sync Routes
       - path: /_matrix/client/unstable/org.matrix.msc3575/sync
         pathType: Prefix
         backend:

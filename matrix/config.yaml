@@ -29,7 +29,7 @@ data:
         cp_min: 5
         cp_max: 10
 
-    # --- Security & Auth ---
+    # --- Security & Auth (MAS Integration) ---
     enable_registration: false
     enable_registration_without_verification: false
     
@@ -38,23 +38,18 @@ data:
     
     signing_key_path: "/secrets/signing.key"
 
-    # --- SSO (Authentik) ---
+    # Disable Password Login (Managed by MAS)
     password_config:
       enabled: false
 
-    oidc_providers:
-      - idp_id: authentik
-        idp_name: Authentik
-        discover: true
-        issuer: "https://id.kbrt.xyz/application/o/matrix/"
-        client_id: "CLIENT_ID_PLACEHOLDER"
-        client_secret: "CLIENT_SECRET_PLACEHOLDER"
-        scopes: ["openid", "profile", "email"]
-        user_mapping_provider:
-          config:
-            localpart_template: "{{ user.preferred_username }}"
-            display_name_template: "{{ user.name }}"
-            email_template: "{{ user.email }}"
+    # Enable MSC3861 (Delegated Auth)
+    experimental_features:
+      msc3861:
+        enabled: true
+        issuer: http://mas.matrix.svc:8080/
+        client_id: 00000000-0000-0000-0000-000000000000
+        client_auth_method: client_secret_post
+        client_secret: "MACAROON_SECRET_PLACEHOLDER" # Reusing as shared secret
 
     # --- Media (S3) ---
     media_store_path: /data/media_store
