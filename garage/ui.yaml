@@ -59,6 +59,7 @@ spec:
       containers:
         - name: garage-ui
           image: noooste/garage-ui:latest
+          command: ["/app/garage-ui"]
           args: ["-config", "/app/config/config.yaml"]
           ports:
             - containerPort: 3000
