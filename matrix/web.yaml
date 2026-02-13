@@ -19,6 +19,8 @@ spec:
           env:
             - name: PORT
               value: "80"
+            - name: ELEMENT_WEB_PORT
+              value: "80"
           ports:
             - containerPort: 80
           volumeMounts:
