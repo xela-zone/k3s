@@ -24,6 +24,7 @@ spec:
               RPC_SECRET=$(cat /secrets/rpc_secret)
               CLIENT_ID=$(cat /secrets/oidc_client_id)
               CLIENT_SECRET=$(cat /secrets/oidc_client_secret)
+              NEXTAUTH_SECRET=$(cat /secrets/nextauth_secret)
               
               cat <<EOF > /config/config.yaml
               server:
@@ -36,6 +37,8 @@ spec:
                 admin_endpoint: "http://garage.garage.svc:3903"
                 admin_token: "$RPC_SECRET"
               auth:
+                # Use the nextauth_secret as a stable signing key
+                jwt_private_key: "$NEXTAUTH_SECRET"
                 oidc:
                   enabled: true
                   provider_name: "Authentik"
@@ -48,11 +51,33 @@ spec:
                   scopes: ["openid", "profile", "email"]
                   cookie_secure: true
                   cookie_same_site: "lax"
+                  cookie_domain: "garage-ui.kbrt.xyz"
                   tls_skip_verify: true
               logging:
-                level: "DEBUG"
+                level: "debug"
                 format: "text"
               EOF
+          env:
+            - name: GARAGE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: rpc_secret
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: oidc_client_id
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: oidc_client_secret
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: nextauth_secret
           volumeMounts:
             - name: config-volume
               mountPath: /config
