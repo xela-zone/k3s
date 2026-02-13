@@ -18,7 +18,7 @@ spec:
         - name: garage
           image: dxflrs/garage:v2.2.0
           command: ["/garage"]
-          args: ["server", "-c", "/etc/garage/garage.toml"]
+          args: ["-c", "/etc/garage/garage.toml", "server"]
           ports:
             - containerPort: 3900
               name: s3-api
