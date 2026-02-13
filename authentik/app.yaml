@@ -13,7 +13,7 @@ spec:
       values: |
         fullnameOverride: authentik
         authentik:
-          # Use the mounted secret file for the encryption key
+          # postgresql and email can use file:///
           postgresql:
             host: authentik-db-rw.authentik.svc
             name: authentik
@@ -46,6 +46,15 @@ spec:
             tls:
               - hosts:
                   - id.kbrt.xyz
+          
+          # Use environment variable for secret_key as it might not support file:///
+          env:
+            - name: AUTHENTIK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: secret_key
+          
           volumes:
             - name: postgres-creds
               secret:
@@ -62,6 +71,13 @@ spec:
               readOnly: true
 
         worker:
+          env:
+            - name: AUTHENTIK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secrets
+                  key: secret_key
+          
           volumes:
             - name: postgres-creds
               secret:
