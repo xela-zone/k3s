@@ -49,9 +49,8 @@ spec:
                   token_url: "https://id.kbrt.xyz/application/o/token/"
                   userinfo_url: "https://id.kbrt.xyz/application/o/userinfo/"
                   scopes: ["openid", "profile", "email"]
-                  cookie_secure: true
+                  cookie_secure: false
                   cookie_same_site: "lax"
-                  cookie_domain: "garage-ui.kbrt.xyz"
                   tls_skip_verify: true
               logging:
                 level: "debug"
