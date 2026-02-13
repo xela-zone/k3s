@@ -48,8 +48,10 @@ spec:
                   userinfo_url: "https://id.kbrt.xyz/application/o/userinfo/"
                   scopes: ["openid", "profile", "email"]
                   username_attribute: "preferred_username"
+                  cookie_name: "garage_session"
                   cookie_secure: true
                   cookie_same_site: "lax"
+                  cookie_domain: "kbrt.xyz"
                   cookie_http_only: false
                   tls_skip_verify: true
               logging:
