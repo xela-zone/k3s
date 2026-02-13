@@ -42,5 +42,5 @@ data:
 
     # Clients (Element Web, Element X, etc.)
     clients:
-      - client_id: 01HCGY0Z10896D686D746D746D
+      - client_id: 6926949a-58b2-4d05-b040-42468305c6d5
         client_auth_method: none

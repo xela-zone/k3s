@@ -24,7 +24,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              pip install --target /modules boto3 tqdm synapse-s3-storage-provider
+              pip install --target /modules --upgrade boto3 tqdm matrix-synapse-s3-storage-provider
           volumeMounts:
             - name: python-modules
               mountPath: /modules
