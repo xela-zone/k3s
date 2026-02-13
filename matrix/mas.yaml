@@ -49,8 +49,9 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
-          command: ["/bin/sh", "-c"]
+          command: ["/bin/sh"]
           args:
+            - "-c"
             - |
               cat /data/config.yaml
               mas-cli config dump
