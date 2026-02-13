@@ -30,15 +30,13 @@ spec:
               server:
                 host: "0.0.0.0"
                 port: 3000
-                environment: "production"
+                environment: "development"
                 root_url: "https://garage-ui.kbrt.xyz"
               garage:
                 endpoint: "http://garage.garage.svc:3900"
                 admin_endpoint: "http://garage.garage.svc:3903"
                 admin_token: "$RPC_SECRET"
               auth:
-                # Leave empty to auto-generate a key on startup
-                jwt_private_key: ""
                 oidc:
                   enabled: true
                   provider_name: "Authentik"
@@ -49,8 +47,10 @@ spec:
                   token_url: "https://id.kbrt.xyz/application/o/token/"
                   userinfo_url: "https://id.kbrt.xyz/application/o/userinfo/"
                   scopes: ["openid", "profile", "email"]
+                  username_attribute: "preferred_username"
                   cookie_secure: true
-                  cookie_same_site: "none"
+                  cookie_same_site: "lax"
+                  cookie_http_only: false
                   tls_skip_verify: true
               logging:
                 level: "debug"
