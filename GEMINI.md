@@ -8,6 +8,7 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
 *   **GitOps Controller:** Argo CD (Self-managed).
 *   **Secret Management:** 1Password Operator.
 *   **Identity Provider:** Authentik.
+*   **Chat:** Matrix (Synapse + Sliding Sync) with S3 offload.
 *   **Network/Ingress:** Tailscale Kubernetes Operator.
 
 ## Architecture & Workflow
@@ -30,10 +31,12 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
     *   `cert-manager.yaml`: Managed cert-manager operator.
     *   `cloudflare.yaml`: Cloudflare Tunnel deployment.
     *   `cnpg.yaml`: Managed CloudNativePG operator.
+    *   `matrix-app.yaml`: Manages the `matrix/` workload.
     *   `monitoring.yaml`: Managed Prometheus/Grafana stack.
 *   **`actual-budget/`**: Manifests for Actual Budget, using static PV binding.
 *   **`alexbot/`**: Consolidated manifests (`app.yaml`, `database.yaml`, `secrets.yaml`).
 *   **`authentik/`**: Identity provider configuration (`app.yaml` with Helm values, `database.yaml`).
+*   **`matrix/`**: Synapse homeserver, Sliding Sync Proxy, and S3 configuration.
 *   **`tailscale/`**: Operator configuration and `ProxyClass` definitions.
 
 ## Patterns & Templates

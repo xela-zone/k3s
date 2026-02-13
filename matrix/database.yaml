@@ -1,0 +1,60 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: matrix-db
+  namespace: matrix
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  bootstrap:
+    initdb:
+      database: synapse
+      owner: synapse
+  storage:
+    storageClass: longhorn-postgres
+    size: 5Gi
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backblaze-b2-store
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: matrix-db-daily-backup
+  namespace: matrix
+spec:
+  schedule: "0 4 * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: matrix-db
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: backblaze-b2-store
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-secret-reader
+  namespace: matrix
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["backblaze-app-key-secret"]
+  verbs: ["get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-secret-reader-binding
+  namespace: matrix
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cnpg-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: matrix-db

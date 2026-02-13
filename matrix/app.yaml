@@ -1,0 +1,216 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-synapse
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix-synapse
+  template:
+    metadata:
+      labels:
+        app: matrix-synapse
+    spec:
+      securityContext:
+        fsGroup: 991 # Synapse user
+        fsGroupChangePolicy: "OnRootMismatch"
+
+      initContainers:
+        # 1. Install S3 Provider Module
+        - name: install-s3-lib
+          image: python:3.11-alpine
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pip install --target /modules matrix-synapse-s3-storage-provider
+              # Also install postgres/psycopg2 dependencies if needed by the provider?
+              # The provider mainly needs boto3 (installed by pip).
+              # Main synapse container has the native postgres libs.
+          volumeMounts:
+            - name: python-modules
+              mountPath: /modules
+
+        # 2. Build Config (Substitutions)
+        - name: config-builder
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Read secrets
+              DB_PASS=$(cat /secrets/db/password)
+              REG_SECRET=$(cat /secrets/matrix/SYNAPSE_REGISTRATION_SHARED_SECRET)
+              MAC_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
+              CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
+              CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
+              S3_ACCESS=$(cat /secrets/s3/AWS_ACCESS_KEY_ID)
+              S3_SECRET=$(cat /secrets/s3/AWS_SECRET_ACCESS_KEY)
+              
+              # Copy template
+              cp /config-template/homeserver.yaml /data/homeserver.yaml
+              
+              # Substitute (using | as delimiter to avoid collision with / in urls/keys)
+              sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/homeserver.yaml
+              sed -i "s|REGISTRATION_SECRET_PLACEHOLDER|$REG_SECRET|g" /data/homeserver.yaml
+              sed -i "s|MACAROON_SECRET_PLACEHOLDER|$MAC_SECRET|g" /data/homeserver.yaml
+              sed -i "s|CLIENT_ID_PLACEHOLDER|$CLIENT_ID|g" /data/homeserver.yaml
+              sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/homeserver.yaml
+              sed -i "s|ACCESS_KEY_PLACEHOLDER|$S3_ACCESS|g" /data/homeserver.yaml
+              sed -i "s|SECRET_KEY_PLACEHOLDER|$S3_SECRET|g" /data/homeserver.yaml
+              
+              # Copy signing key
+              if [ -f /secrets/matrix/SYNAPSE_SIGNING_KEY ]; then
+                cp /secrets/matrix/SYNAPSE_SIGNING_KEY /data/signing.key
+                chmod 644 /data/signing.key
+              fi
+
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: generated-config
+              mountPath: /data
+            - name: matrix-secrets
+              mountPath: /secrets/matrix
+            - name: db-secret
+              mountPath: /secrets/db
+            - name: s3-secret
+              mountPath: /secrets/s3
+
+      containers:
+        # --- Synapse ---
+        - name: synapse
+          image: matrixdotorg/synapse:latest
+          args: ["start"]
+          env:
+            - name: PYTHONPATH
+              value: "/modules"
+          ports:
+            - containerPort: 8008
+              name: http
+          volumeMounts:
+            - name: generated-config
+              mountPath: /data
+            - name: media-store
+              mountPath: /data/media_store
+            - name: python-modules
+              mountPath: /modules
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8008
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8008
+            initialDelaySeconds: 15
+            periodSeconds: 10
+        
+        # --- Sliding Sync Proxy (Element X) ---
+        - name: sliding-sync
+          image: ghcr.io/matrix-org/sliding-sync:latest
+          env:
+            - name: SYNCV3_SERVER
+              value: "http://localhost:8008"
+            - name: SYNCV3_DB
+              # Reusing the synapse DB for simplicity (different tables)
+              # NOTE: We must construct the connection string using the mounted secret
+              # We can't use valueFrom here easily because we need to interpolate the password.
+              # Hack: Use a shell to start it? Or trusted auth?
+              # Let's use the 'command' override to source the password.
+              value: "postgres://synapse:$(DB_PASSWORD)@matrix-db-rw.matrix.svc/synapse?sslmode=disable"
+            - name: SYNCV3_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-secrets
+                  key: SLIDING_SYNC_SECRET
+            - name: SYNCV3_BINDADDR
+              value: "0.0.0.0:8009"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-db-app
+                  key: password
+          ports:
+            - containerPort: 8009
+              name: sync
+
+      volumes:
+        - name: config-template
+          configMap:
+            name: matrix-config
+        - name: generated-config
+          emptyDir: {}
+        - name: media-store
+          emptyDir: {}
+        - name: python-modules
+          emptyDir: {}
+        - name: matrix-secrets
+          secret:
+            secretName: matrix-secrets
+        - name: db-secret
+          secret:
+            secretName: matrix-db-app
+        - name: s3-secret
+          secret:
+            secretName: backblaze-app-key-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix
+  namespace: matrix
+spec:
+  ports:
+    - port: 80
+      targetPort: 8008
+      name: http
+    - port: 8009
+      targetPort: 8009
+      name: sync
+  selector:
+    app: matrix-synapse
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: matrix
+  namespace: matrix
+  annotations:
+    tailscale.com/hostname: "matrix"
+    tailscale.com/https: "true"
+    tailscale.com/tags: "tag:deployment"
+    tailscale.com/proxy-class: "https-proxy"
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+    - matrix.moose-amberjack.ts.net
+  rules:
+  - host: matrix.moose-amberjack.ts.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: matrix
+            port:
+              number: 80
+      # Route sliding sync requests
+      - path: /_matrix/client/unstable/org.matrix.msc3575/sync
+        pathType: Prefix
+        backend:
+          service:
+            name: matrix
+            port:
+              number: 8009
+      - path: /client/server.json
+        pathType: Prefix
+        backend:
+          service:
+            name: matrix
+            port:
+              number: 8009
