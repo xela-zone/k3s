@@ -42,6 +42,8 @@ spec:
                   client_id: "$CLIENT_ID"
                   client_secret: "$CLIENT_SECRET"
                   scopes: ["openid", "profile"]
+                  cookie_secure: true
+                  cookie_same_site: "lax"
               next_auth:
                 secret: "$NEXTAUTH_SECRET"
               EOF
