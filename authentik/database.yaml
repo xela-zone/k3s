@@ -6,6 +6,10 @@ metadata:
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
+  bootstrap:
+    initdb:
+      database: authentik
+      owner: authentik
   storage:
     storageClass: longhorn-postgres
     size: 5Gi
