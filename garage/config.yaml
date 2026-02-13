@@ -10,21 +10,21 @@ data:
     
     replication_factor = 1
     
-    rpc_bind_addr = "[::]:3901"
+    rpc_bind_addr = "0.0.0.0:3901"
     rpc_public_addr = "garage-0.garage-headless.garage.svc.cluster.local:3901"
     rpc_secret_file = "/etc/garage/rpc_secret"
     
     [s3_api]
     s3_region = "garage"
-    api_bind_addr = "[::]:3900"
+    api_bind_addr = "0.0.0.0:3900"
     root_domain = "s3.kbrt.xyz"
     
     [s3_web]
-    bind_addr = "[::]:3902"
+    bind_addr = "0.0.0.0:3902"
     root_domain = ".web.kbrt.xyz"
     enabled = true
     
     [admin]
-    api_bind_addr = "[::]:3903"
+    api_bind_addr = "0.0.0.0:3903"
     metrics_token = "optional-metrics-token" # We can expose this safely via internal network
     admin_token_file = "/etc/garage/rpc_secret" # Use same secret for admin CLI access if needed, or simpler auth
