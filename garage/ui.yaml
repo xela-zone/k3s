@@ -49,6 +49,9 @@ spec:
                   cookie_secure: true
                   cookie_same_site: "lax"
                   tls_skip_verify: true
+              logging:
+                level: "DEBUG"
+                format: "text"
               EOF
           volumeMounts:
             - name: config-volume
