@@ -20,19 +20,16 @@ spec:
             - sh
             - -c
             - |
-              # Read secrets from files to avoid shell escaping issues
+              # Read secrets and escape them for YAML if needed
               RPC_SECRET=$(cat /secrets/rpc_secret)
               CLIENT_ID=$(cat /secrets/oidc_client_id)
               CLIENT_SECRET=$(cat /secrets/oidc_client_secret)
-              NEXTAUTH_SECRET=$(cat /secrets/nextauth_secret)
               
               cat <<EOF > /config/config.yaml
               server:
                 host: "0.0.0.0"
                 port: 3000
-                environment: "development"
-                domain: "garage-ui.kbrt.xyz"
-                protocol: "https"
+                environment: "production"
                 root_url: "https://garage-ui.kbrt.xyz"
               garage:
                 endpoint: "http://garage.garage.svc:3900"
@@ -41,17 +38,17 @@ spec:
               auth:
                 oidc:
                   enabled: true
-                  issuer_url: "https://id.kbrt.xyz/application/o/garage-ui/"
+                  provider_name: "Authentik"
                   client_id: "$CLIENT_ID"
                   client_secret: "$CLIENT_SECRET"
-                  scopes: ["openid", "profile"]
+                  issuer_url: "https://id.kbrt.xyz/application/o/garage-ui/"
+                  auth_url: "https://id.kbrt.xyz/application/o/authorize/"
+                  token_url: "https://id.kbrt.xyz/application/o/token/"
+                  userinfo_url: "https://id.kbrt.xyz/application/o/userinfo/"
+                  scopes: ["openid", "profile", "email"]
                   cookie_secure: true
                   cookie_same_site: "lax"
-                  cookie_domain: "garage-ui.kbrt.xyz"
                   tls_skip_verify: true
-                  skip_issuer_check: true
-              next_auth:
-                secret: "$NEXTAUTH_SECRET"
               EOF
           volumeMounts:
             - name: config-volume
