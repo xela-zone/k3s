@@ -20,14 +20,11 @@ spec:
       initContainers:
         # 1. Install S3 Provider Module
         - name: install-s3-lib
-          image: python:3.14-alpine@sha256:faee120f7885a06fcc9677922331391fa690d911c020abb9e8025ff3d908e510
+          image: python:3.11-slim
           command: ["/bin/sh", "-c"]
           args:
             - |
               pip install --target /modules matrix-synapse-s3-storage-provider
-          volumeMounts:
-            - name: python-modules
-              mountPath: /modules
 
         # 2. Build Config (Substitutions)
         - name: config-builder

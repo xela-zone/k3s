@@ -5,6 +5,7 @@ metadata:
   namespace: matrix
 spec:
   instances: 1
+  enableSuperuserAccess: true
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   bootstrap:
     initdb:
