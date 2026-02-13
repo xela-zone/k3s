@@ -36,7 +36,7 @@ data:
     registration_shared_secret: "REGISTRATION_SECRET_PLACEHOLDER"
     macaroon_secret_key: "MACAROON_SECRET_PLACEHOLDER"
     
-    signing_key_path: "/secrets/signing.key"
+    signing_key_path: "/data/signing.key"
 
     # Disable Password Login (Managed by MAS)
     password_config:

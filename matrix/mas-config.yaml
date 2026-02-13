@@ -22,7 +22,7 @@ data:
     # Upstream Identity Provider (Authentik)
     upstream_oauth2:
       providers:
-        - id: 01HCGY0Z10896D686D746D746B
+        - id: 01HCGY0Z10896D686D746D746D6D
           human_name: "Authentik"
           issuer: "https://id.kbrt.xyz/application/o/matrix/"
           client_id: "CLIENT_ID_PLACEHOLDER"
