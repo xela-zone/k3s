@@ -173,7 +173,7 @@ spec:
   - host: matrix.kbrt.xyz
     http:
       paths:
-      # MAS Routes
+      # MAS Routes (Specific)
       - path: /.well-known/openid-configuration
         pathType: Prefix
         backend:
@@ -210,16 +210,7 @@ spec:
             port:
               number: 8080
       
-      # Synapse Routes
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: matrix
-            port:
-              number: 80
-      
-      # Sliding Sync Routes
+      # Sliding Sync Routes (Specific)
       - path: /_matrix/client/unstable/org.matrix.msc3575/sync
         pathType: Prefix
         backend:
@@ -234,3 +225,12 @@ spec:
             name: matrix
             port:
               number: 8009
+
+      # Synapse Routes (Catch-all)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: matrix
+            port:
+              number: 80
