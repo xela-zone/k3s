@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filestash
+  namespace: garage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filestash
+  template:
+    metadata:
+      labels:
+        app: filestash
+    spec:
+      containers:
+        - name: filestash
+          image: machines/filestash:latest
+          ports:
+            - containerPort: 8334
+              name: http
+          volumeMounts:
+            - name: data
+              mountPath: /app/data/state
+          env:
+            - name: APPLICATION_URL
+              value: "https://files.kbrt.xyz"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: filestash-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filestash
+  namespace: garage
+spec:
+  ports:
+    - port: 80
+      targetPort: 8334
+      name: http
+  selector:
+    app: filestash
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: filestash-data
+  namespace: garage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: filestash
+  namespace: garage
+  annotations:
+    tailscale.com/hostname: "filestash"
+    tailscale.com/https: "true"
+    tailscale.com/tags: "tag:deployment"
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+    - files.kbrt.xyz
+  rules:
+  - host: files.kbrt.xyz
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: filestash
+            port:
+              name: http
