@@ -17,6 +17,7 @@ spec:
       containers:
         - name: garage
           image: dxflrs/garage:v2.2.0
+          command: ["/garage"]
           args: ["server", "-c", "/etc/garage/garage.toml"]
           ports:
             - containerPort: 3900
