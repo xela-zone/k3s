@@ -19,9 +19,6 @@ spec:
           image: dxflrs/garage:v2.2.0
           command: ["/garage"]
           args: ["-c", "/etc/garage/garage.toml", "server"]
-          env:
-            - name: GARAGE_ALLOW_WORLD_READABLE_SECRETS
-              value: "true"
           ports:
             - containerPort: 3900
               name: s3-api
@@ -56,6 +53,7 @@ spec:
         - name: secrets
           secret:
             secretName: garage-secrets
+            defaultMode: 0400
 ---
 apiVersion: v1
 kind: Service
