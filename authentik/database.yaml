@@ -1,0 +1,56 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-db
+  namespace: authentik
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  storage:
+    storageClass: longhorn-postgres
+    size: 5Gi
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backblaze-b2-store
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: authentik-db-daily-backup
+  namespace: authentik
+spec:
+  schedule: "0 5 * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: authentik-db
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: backblaze-b2-store
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-secret-reader
+  namespace: authentik
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["backblaze-app-key-secret"]
+  verbs: ["get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-secret-reader-binding
+  namespace: authentik
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cnpg-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: authentik-db

@@ -1,0 +1,85 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.goauthentik.io
+    chart: authentik
+    targetRevision: 2025.12.4
+    helm:
+      values: |
+        authentik:
+          secret_key: "file:///authentik-secrets/secret_key"
+          postgresql:
+            host: authentik-db-rw.authentik.svc
+            name: authentik
+            user: file:///postgres-creds/username
+            password: file:///postgres-creds/password
+          
+          email:
+            host: "file:///authentik-secrets/smtp_host"
+            from: "file:///authentik-secrets/smtp_from"
+            username: "file:///authentik-secrets/smtp_username"
+            password: "file:///authentik-secrets/smtp_password"
+            port: 465
+            use_ssl: true
+        
+        redis:
+          enabled: false
+        postgresql:
+          enabled: false
+        
+        server:
+          ingress:
+            enabled: true
+            ingressClassName: tailscale
+            annotations:
+              tailscale.com/hostname: "id"
+              tailscale.com/https: "true"
+              tailscale.com/tags: "tag:deployment"
+            hosts:
+              - id.kbrt.xyz
+            tls:
+              - hosts:
+                  - id.kbrt.xyz
+          volumes:
+            - name: postgres-creds
+              secret:
+                secretName: authentik-db-app
+            - name: authentik-secrets
+              secret:
+                secretName: authentik-secrets
+          volumeMounts:
+            - name: postgres-creds
+              mountPath: /postgres-creds
+              readOnly: true
+            - name: authentik-secrets
+              mountPath: /authentik-secrets
+              readOnly: true
+
+        worker:
+          volumes:
+            - name: postgres-creds
+              secret:
+                secretName: authentik-db-app
+            - name: authentik-secrets
+              secret:
+                secretName: authentik-secrets
+          volumeMounts:
+            - name: postgres-creds
+              mountPath: /postgres-creds
+              readOnly: true
+            - name: authentik-secrets
+              mountPath: /authentik-secrets
+              readOnly: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: authentik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
