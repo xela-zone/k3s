@@ -36,11 +36,8 @@ data:
       homeserver: "http://matrix.matrix.svc:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"  # Synapse and MAS share this
 
-    # Encryption keys (injected)
-    secrets:
-      encryption: "ENCRYPTION_KEY_PLACEHOLDER"
+# Encryption keys (injected)
+secrets:
+  encryption: "ENCRYPTION_KEY_PLACEHOLDER"
 
-    # Clients (Element Web, Element X, etc.)
-    clients:
-      - client_id: 6926949a-58b2-4d05-b040-42468305c6d5
-        client_auth_method: none
+# End of config
