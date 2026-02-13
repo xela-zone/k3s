@@ -28,7 +28,7 @@ data:
 
     # Matrix Homeserver Integration
     matrix:
-      homeserver: "matrix.kbrt.xyz"
+      homeserver: "https://matrix.kbrt.xyz"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
     # Encryption keys
