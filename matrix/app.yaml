@@ -108,6 +108,11 @@ spec:
           env:
             - name: SYNCV3_SERVER
               value: "http://localhost:8008"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-db-app
+                  key: password
             - name: SYNCV3_DB
               value: "postgres://synapse:$(DB_PASSWORD)@matrix-db-rw.matrix.svc/synapse?sslmode=disable"
             - name: SYNCV3_SECRET
@@ -117,11 +122,6 @@ spec:
                   key: SLIDING_SYNC_SECRET
             - name: SYNCV3_BINDADDR
               value: "0.0.0.0:8009"
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: matrix-db-app
-                  key: password
           ports:
             - containerPort: 8009
               name: sync
