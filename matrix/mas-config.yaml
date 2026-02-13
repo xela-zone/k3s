@@ -8,22 +8,11 @@ data:
     # HTTP listener
     http:
       address: "0.0.0.0:8080"
-      public_base: https://matrix.kbrt.xyz/
-      ipv4_only: true
-      cors:
-        allowed_origins:
-          - "https://chat.kbrt.xyz"
-          - "https://element.io" # Standard Element Web
-          - "https://develop.element.io"
+      public_base: "https://matrix.kbrt.xyz/"
 
     # Database connection
     database:
-      uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
-
-    # Telemetry
-    telemetry:
-      tracing:
-        enabled: false
+      uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc.cluster.local/mas"
 
     # Upstream Identity Provider (Authentik)
     upstream_oauth2:
@@ -39,7 +28,7 @@ data:
 
     # Matrix Homeserver Integration
     matrix:
-      homeserver: "http://matrix.matrix.svc.cluster.local:80"
+      homeserver: "matrix.kbrt.xyz"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
     # Encryption keys
@@ -47,8 +36,6 @@ data:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
       session: "SESSION_SECRET_PLACEHOLDER"
 
-    # Clients
-    clients:
-      - client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
-        client_auth_method: client_secret_post
-        client_secret: "MAS_SHARED_SECRET_PLACEHOLDER"
+    # Minimal Policy
+    policy:
+      wasm: "/usr/local/share/mas-cli/policy.wasm"

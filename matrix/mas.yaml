@@ -49,13 +49,7 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
-          command: ["/bin/sh"]
-          args:
-            - "-c"
-            - |
-              cat /data/config.yaml
-              mas-cli config dump
-              mas-cli server --config /data/config.yaml
+          args: ["server", "--config", "/data/config.yaml"]
           ports:
             - containerPort: 8080
               name: http
@@ -68,6 +62,10 @@ spec:
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 30
+        
+        - name: debug
+          image: nicolaka/netshoot
+          command: ["/bin/sh", "-c", "sleep infinity"]
 
       volumes:
         - name: config-template
