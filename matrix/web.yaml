@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: element-web
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: element-web
+  template:
+    metadata:
+      labels:
+        app: element-web
+    spec:
+      containers:
+        - name: element-web
+          image: vectorim/element-web:latest
+          env:
+            - name: PORT
+              value: "80"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.json
+              subPath: config.json
+      volumes:
+        - name: config
+          configMap:
+            name: element-web-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: element-web
+  namespace: matrix
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: element-web
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: element-web
+  namespace: matrix
+spec:
+  rules:
+  - host: chat.kbrt.xyz
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: element-web
+            port:
+              number: 80
