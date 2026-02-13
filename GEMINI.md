@@ -7,6 +7,7 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
 *   **Cluster:** k3s.
 *   **GitOps Controller:** Argo CD (Self-managed).
 *   **Secret Management:** 1Password Operator.
+*   **Identity Provider:** Authentik.
 *   **Network/Ingress:** Tailscale Kubernetes Operator.
 
 ## Architecture & Workflow
@@ -23,10 +24,16 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
 *   **`root-app.yaml`**: The "App of Apps" bootstrap manifest.
 *   **`apps/`**: The control plane for all cluster workloads.
     *   `argo-cd.yaml`: Self-management for Argo CD (v7.8.2+).
+    *   `actual-budget-app.yaml`: Manages the `actual-budget/` workload.
     *   `alex-bot-app.yaml`: Manages the `alexbot/` workload.
+    *   `authentik-app.yaml`: Manages the `authentik/` workload.
+    *   `cert-manager.yaml`: Managed cert-manager operator.
+    *   `cloudflare.yaml`: Cloudflare Tunnel deployment.
     *   `cnpg.yaml`: Managed CloudNativePG operator.
     *   `monitoring.yaml`: Managed Prometheus/Grafana stack.
+*   **`actual-budget/`**: Manifests for Actual Budget, using static PV binding.
 *   **`alexbot/`**: Consolidated manifests (`app.yaml`, `database.yaml`, `secrets.yaml`).
+*   **`authentik/`**: Identity provider configuration (`app.yaml` with Helm values, `database.yaml`).
 *   **`tailscale/`**: Operator configuration and `ProxyClass` definitions.
 
 ## Patterns & Templates
@@ -39,6 +46,17 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
     *   *Why:* Simply setting `recurringJobs: '[]'` is often overridden by Longhorn's global default group setting.
 *   **Filesystem Trim:** A `weekly-trim` recurring job (task: `filesystem-trim`) is configured for both `default` and `disabled` groups to ensure disk space is reclaimed regularly.
 *   **StorageClass Updates:** StorageClass parameters are **immutable**. If you need to change them (e.g., updating `recurringJobSelector`), you must **delete the StorageClass** manually and let Argo CD recreate it. Argo CD sync will fail with "Forbidden: updates to parameters" otherwise.
+
+### Static PersistentVolume Binding (Data Persistence)
+
+To ensure critical application data persists across namespace deletions or "nuke and pave" operations, use the **Static PV** pattern (as seen in `actual-budget/`):
+
+1.  **Define a PersistentVolume (PV):** Explicitly create a `PersistentVolume` resource.
+    *   Set `volumeHandle` to the exact name of the existing Longhorn volume.
+    *   Set `claimRef` (optional but good practice) or rely on `volumeName` binding.
+2.  **Define a PersistentVolumeClaim (PVC):**
+    *   Set `volumeName` to match the static PV name.
+    *   This forces the PVC to bind to your specific, pre-existing Longhorn volume instead of provisioning a new one.
 
 ### Adding a New Application with Tailscale Ingress
 
