@@ -44,6 +44,8 @@ spec:
                   scopes: ["openid", "profile"]
                   cookie_secure: true
                   cookie_same_site: "lax"
+                  cookie_domain: "garage-ui.kbrt.xyz"
+                  tls_skip_verify: true
               next_auth:
                 secret: "$NEXTAUTH_SECRET"
               EOF
