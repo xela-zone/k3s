@@ -178,18 +178,9 @@ kind: Ingress
 metadata:
   name: matrix
   namespace: matrix
-  annotations:
-    tailscale.com/hostname: "matrix"
-    tailscale.com/https: "true"
-    tailscale.com/tags: "tag:deployment"
-    tailscale.com/proxy-class: "https-proxy"
 spec:
-  ingressClassName: tailscale
-  tls:
-  - hosts:
-    - matrix.moose-amberjack.ts.net
   rules:
-  - host: matrix.moose-amberjack.ts.net
+  - host: matrix.kbrt.xyz
     http:
       paths:
       - path: /
