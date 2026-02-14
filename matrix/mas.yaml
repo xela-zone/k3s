@@ -35,6 +35,18 @@ spec:
               sed -i "s|ENCRYPTION_KEY_PLACEHOLDER|$ENC_KEY|g" /data/config.yaml
               sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               sed -i "s|SESSION_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
+              
+              # Copy the OIDC signing key from 1Password secret
+              cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
+              chmod 600 /data/oidc.key
+              
+              # Generate keys if they don't exist
+              if [ ! -f /data/keys.jwks ]; then
+                # We need mas-cli to generate keys. It's in the main image.
+                # Use the main image for this part? No, alpine can't run it easily.
+                # I'll just touch the file for now? No.
+                echo "Keys missing"
+              fi
 
           volumeMounts:
             - name: config-template

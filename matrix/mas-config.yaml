@@ -9,12 +9,15 @@ data:
     http:
       address: "0.0.0.0:8080"
       public_base: "https://matrix.kbrt.xyz/"
-      cors:
-        allowed_origins:
 
     # Database connection
     database:
       uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc.cluster.local/mas"
+
+    # Telemetry
+    telemetry:
+      tracing:
+        enabled: false
 
     # Upstream Identity Provider (Authentik)
     upstream_oauth2:
@@ -37,6 +40,9 @@ data:
     secrets:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
       session: "SESSION_SECRET_PLACEHOLDER"
+      keys:
+        - kid: "01HBG9Y6B0ZEDAVZZV9TZPDZZZ"
+          key_file: "/data/oidc.key"
 
     # Minimal Policy
     policy:
