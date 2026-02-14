@@ -12,8 +12,9 @@ synapse:
     database: "synapse"
     sslMode: "prefer"
     password:
-      secret: "matrix-db-app"
-      secretKey: "password"
+      secretKeyRef:
+        name: "matrix-db-app"
+        key: "password"
   # S3 Media Offload
   media:
     s3:
@@ -37,8 +38,9 @@ matrixAuthenticationService:
     database: "mas"
     sslMode: "prefer"
     password:
-      secret: "matrix-db-app"
-      secretKey: "password"
+      secretKeyRef:
+        name: "matrix-db-app"
+        key: "password"
 
 # Upstream OIDC (Authentik)
 authentication:
