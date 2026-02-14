@@ -11,8 +11,8 @@ synapse:
     user: "synapse"
     database: "synapse"
     sslMode: "prefer"
-    # Try different secret name key
-    existingSecret: "matrix-db-app"
+    password:
+      value: "PLACEHOLDER"
 
 # Matrix Authentication Service (MAS)
 matrixAuthenticationService:
@@ -24,7 +24,8 @@ matrixAuthenticationService:
     user: "synapse"
     database: "synapse"
     sslMode: "prefer"
-    existingSecret: "matrix-db-app"
+    password:
+      value: "PLACEHOLDER"
 
 # Element Web
 elementWeb:
@@ -33,5 +34,6 @@ elementWeb:
 
 # Ingress Global Config
 ingress:
-  annotations:
-    kubernetes.io/ingress.class: traefik
+  # ingressClassName is not allowed, so we leave it empty and hope for default
+  # or use annotations if allowed.
+  {}
