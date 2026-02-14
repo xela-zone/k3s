@@ -19,6 +19,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -e
               # Read secrets
               DB_PASS=$(cat /secrets/db/password)
               CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
@@ -26,6 +27,7 @@ spec:
               ENC_KEY=$(cat /secrets/matrix/MAS_ENCRYPTION_KEY)
               SHARED_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
               
+              echo "Building config..."
               cp /config-template/config.yaml /data/config.yaml
               
               sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/config.yaml
@@ -35,15 +37,20 @@ spec:
               sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               sed -i "s|SESSION_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               
-              # Copy the OIDC signing key and clean up whitespace
-              tr -d '\r' < /secrets/matrix/MAS_OIDC_KEY > /data/oidc.key
+              echo "Processing OIDC key..."
+              if [ -f /secrets/matrix/MAS_OIDC_KEY ]; then
+                # Clean up any potential \r from 1Password/Windows sync
+                tr -d '\r' < /secrets/matrix/MAS_OIDC_KEY > /data/oidc.key
+                chmod 644 /data/oidc.key
+                echo "OIDC key processed."
+              else
+                echo "ERROR: /secrets/matrix/MAS_OIDC_KEY not found!"
+                exit 1
+              fi
               
-              # Ensure JWKS exists
               touch /data/keys.jwks
-              
-              # Set ownership and permissions for MAS user (UID 1000)
               chown -R 1000:1000 /data
-              chmod 644 /data/config.yaml /data/keys.jwks /data/oidc.key
+              chmod 644 /data/config.yaml /data/keys.jwks
 
           volumeMounts:
             - name: config-template
@@ -61,9 +68,8 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          env:
-            - name: MAS_CONFIG
-              value: "/data/config.yaml"
+          command: ["/usr/local/bin/mas-cli"]
+          args: ["server", "--config", "/data/config.yaml"]
           ports:
             - containerPort: 8080
               name: http
@@ -90,7 +96,6 @@ spec:
         - name: matrix-secrets
           secret:
             secretName: matrix-secrets
-            # Maps secret keys to filenames in the mounted volume
             items:
               - key: SYNAPSE_REGISTRATION_SHARED_SECRET
                 path: SYNAPSE_REGISTRATION_SHARED_SECRET
