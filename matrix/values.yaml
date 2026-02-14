@@ -12,9 +12,8 @@ synapse:
     database: "synapse"
     sslMode: "prefer"
     password:
-      secretKeyRef:
-        name: "matrix-db-app"
-        key: "password"
+      secret: "matrix-db-app"
+      secretKey: "password"
   # S3 Media Offload
   media:
     s3:
@@ -35,12 +34,11 @@ matrixAuthenticationService:
     host: "matrix-db-rw.matrix.svc"
     port: 5432
     user: "synapse"
-    database: "mas"
+    database: "synapse" # SHARE THE DATABASE
     sslMode: "prefer"
     password:
-      secretKeyRef:
-        name: "matrix-db-app"
-        key: "password"
+      secret: "matrix-db-app"
+      secretKey: "password"
 
 # Upstream OIDC (Authentik)
 authentication:
