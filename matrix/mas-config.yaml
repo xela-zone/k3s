@@ -6,12 +6,16 @@ metadata:
 data:
   config.yaml: |
     http:
-      address: "0.0.0.0:8080"
+      listeners:
+        - name: web
+          resources:
+            - name: discovery
+            - name: human
+            - name: oauth
+            - name: compat
+          binds:
+            - address: "0.0.0.0:8080"
       public_base: "https://matrix-auth.kbrt.xyz/"
-      cors:
-        allowed_origins:
-          - "https://chat.kbrt.xyz"
-          - "https://element.io"
 
     database:
       uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
