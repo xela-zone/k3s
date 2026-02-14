@@ -15,7 +15,7 @@ synapse:
 mas:
   enabled: true
   config:
-    publicBaseUrl: https://auth.kbrt.xyz/
+    publicBaseUrl: https://accounts.kbrt.xyz/
     # Upstream OIDC (Authentik)
     upstreamOidc:
       issuer: "https://id.kbrt.xyz/application/o/matrix/"
@@ -69,11 +69,11 @@ ingress:
       paths: [{path: /, pathType: Prefix}]
     - host: chat.kbrt.xyz
       paths: [{path: /, pathType: Prefix}]
-    - host: auth.kbrt.xyz
+    - host: accounts.kbrt.xyz
       paths: [{path: /, pathType: Prefix}]
-    - host: admin.kbrt.xyz
+    - host: matrix-admin.kbrt.xyz
       paths: [{path: /, pathType: Prefix}]
-    - host: mrtc.kbrt.xyz
+    - host: calls.kbrt.xyz
       paths: [{path: /, pathType: Prefix}]
     - host: kbrt.xyz
       paths: [{path: /, pathType: Prefix}]
