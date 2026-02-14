@@ -59,15 +59,12 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
-          workingDir: /usr/local/share/mas-cli
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              cat /data/config.yaml
-              /usr/local/bin/mas-cli server --config /data/config.yaml
+          # DO NOT use /bin/sh here, use the binary directly
+          command: ["/usr/local/bin/mas-cli"]
+          args: ["server", "--config", "/data/config.yaml"]
           ports:
             - containerPort: 8080
               name: http
