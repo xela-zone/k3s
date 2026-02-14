@@ -43,7 +43,7 @@ metadata:
   namespace: matrix
 spec:
   configuration:
-    destinationPath: "s3://k3s-backup-7cabee/matrix-stack-v1/"
+    destinationPath: "s3://k3s-backup-7cabee/matrix-v2/"
     endpointURL: "https://s3.us-west-004.backblazeb2.com"
     s3Credentials:
       accessKeyId:

@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: matrix
+  namespace: matrix
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: matrix.kbrt.xyz
+      http:
+        paths:
+          - path: /_matrix/client/unstable/org.matrix.msc3575/sync
+            pathType: Prefix
+            backend: { service: { name: matrix, port: { number: 8009 } } }
+          - path: /client/server.json
+            pathType: Prefix
+            backend: { service: { name: matrix, port: { number: 8009 } } }
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: matrix, port: { number: 80 } } }
+    
+    - host: matrix-auth.kbrt.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: mas, port: { number: 8080 } } }
+
+    - host: chat.kbrt.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: element-web, port: { number: 80 } } }
+
+    - host: kbrt.xyz
+      http:
+        paths:
+          - path: /.well-known/matrix
+            pathType: Prefix
+            backend: { service: { name: matrix, port: { number: 80 } } }

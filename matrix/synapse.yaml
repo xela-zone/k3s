@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-synapse
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix-synapse
+  template:
+    metadata:
+      labels:
+        app: matrix-synapse
+    spec:
+      securityContext:
+        fsGroup: 991
+        fsGroupChangePolicy: "OnRootMismatch"
+
+      initContainers:
+        # 1. Install S3 Lib
+        - name: install-s3-lib
+          image: matrixdotorg/synapse:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pip install --target /modules boto3 tqdm https://github.com/matrix-org/synapse-s3-storage-provider/archive/refs/heads/main.zip
+          volumeMounts:
+            - name: python-modules
+              mountPath: /modules
+
+        # 2. Build Config
+        - name: config-builder
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              # Read secrets
+              DB_PASS=$(cat /secrets/db/password)
+              REG_SECRET=$(cat /secrets/matrix/SYNAPSE_REGISTRATION_SHARED_SECRET)
+              MAC_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
+              CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
+              CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
+              S3_ACCESS=$(cat /secrets/s3/username)
+              S3_SECRET=$(cat /secrets/s3/password)
+              
+              cp /config-template/homeserver.yaml /data/homeserver.yaml
+              
+              sed -i "s|DB_PASSWORD_PLACEHOLDER|$DB_PASS|g" /data/homeserver.yaml
+              sed -i "s|REGISTRATION_SECRET_PLACEHOLDER|$REG_SECRET|g" /data/homeserver.yaml
+              sed -i "s|MACAROON_SECRET_PLACEHOLDER|$MAC_SECRET|g" /data/homeserver.yaml
+              sed -i "s|CLIENT_ID_PLACEHOLDER|$CLIENT_ID|g" /data/homeserver.yaml
+              sed -i "s|CLIENT_SECRET_PLACEHOLDER|$CLIENT_SECRET|g" /data/homeserver.yaml
+              sed -i "s|ACCESS_KEY_PLACEHOLDER|$S3_ACCESS|g" /data/homeserver.yaml
+              sed -i "s|SECRET_KEY_PLACEHOLDER|$S3_SECRET|g" /data/homeserver.yaml
+              
+              # Formatted signing key
+              RAW_KEY=$(cat /secrets/matrix/SYNAPSE_SIGNING_KEY | sed 's/-----BEGIN PRIVATE KEY-----//g' | sed 's/-----END PRIVATE KEY-----//g' | tr -d '[:space:]')
+              # Wait! Synapse signing key uses a different format (no header/footer usually)
+              # Actually, if we generated it via 'generate', we should just copy it.
+              cp /secrets/matrix/SYNAPSE_SIGNING_KEY /data/signing.key
+              chmod 644 /data/signing.key
+
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: generated-config
+              mountPath: /data
+            - name: matrix-secrets
+              mountPath: /secrets/matrix
+            - name: db-secret
+              mountPath: /secrets/db
+            - name: s3-secret
+              mountPath: /secrets/s3
+
+      containers:
+        - name: synapse
+          image: matrixdotorg/synapse:latest
+          args: ["run"]
+          env:
+            - name: PYTHONPATH
+              value: "/modules"
+          ports:
+            - containerPort: 8008
+              name: http
+          volumeMounts:
+            - name: generated-config
+              mountPath: /data
+            - name: media-store
+              mountPath: /data/media_store
+            - name: python-modules
+              mountPath: /modules
+          livenessProbe:
+            httpGet: { path: /health, port: 8008 }
+            initialDelaySeconds: 120 # Give time for migrations
+            periodSeconds: 30
+        
+        - name: sliding-sync
+          image: ghcr.io/matrix-org/sliding-sync:latest
+          env:
+            - name: SYNCV3_SERVER
+              value: "http://localhost:8008"
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: matrix-db-app, key: password } }
+            - name: SYNCV3_DB
+              value: "postgres://synapse:$(DB_PASSWORD)@matrix-db-rw.matrix.svc/synapse?sslmode=disable"
+            - name: SYNCV3_SECRET
+              valueFrom: { secretKeyRef: { name: matrix-secrets, key: SLIDING_SYNC_SECRET } }
+            - name: SYNCV3_BINDADDR
+              value: "0.0.0.0:8009"
+          ports:
+            - containerPort: 8009
+              name: sync
+
+      volumes:
+        - name: config-template
+          configMap: { name: synapse-config }
+        - name: generated-config
+          emptyDir: {}
+        - name: media-store
+          emptyDir: {}
+        - name: python-modules
+          emptyDir: {}
+        - name: matrix-secrets
+          secret: { secretName: matrix-secrets }
+        - name: db-secret
+          secret: { secretName: matrix-db-app }
+        - name: s3-secret
+          secret: { secretName: backblaze-app-key-secret }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix
+  namespace: matrix
+spec:
+  ports:
+    - port: 80
+      targetPort: 8008
+      name: http
+    - port: 8009
+      targetPort: 8009
+      name: sync
+  selector:
+    app: matrix-synapse
