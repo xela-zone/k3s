@@ -13,7 +13,7 @@ data:
             - name: human
             - name: oauth
             - name: compat
-            - name: assets # ADDED THIS
+            - name: assets
           binds:
             - address: "0.0.0.0:8080"
       public_base: "https://matrix-auth.kbrt.xyz/"
@@ -42,7 +42,10 @@ data:
       endpoint: "http://matrix:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
-    # Encryption keys
+    # Disable local passwords
+    passwords:
+      enabled: false
+
     secrets:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
       session: "SESSION_SECRET_PLACEHOLDER"
@@ -50,9 +53,5 @@ data:
         - kid: "01HBG9Y6B0ZEDAVZZV9TZPDZZZ"
           key_file: "/data/oidc.key"
 
-    # Disable local passwords
-    passwords:
-      enabled: false
-
-    # End of config
-
+    policy:
+      wasm: "/usr/local/share/mas-cli/policy.wasm"
