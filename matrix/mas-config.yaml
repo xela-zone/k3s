@@ -44,7 +44,7 @@ data:
     # Clients
     clients:
       - client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
-        client_auth_method: client_secret_post
+        client_auth_method: client_secret_basic
         client_secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
     passwords:
