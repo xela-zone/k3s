@@ -19,7 +19,6 @@ spec:
             - "matrix-auth.kbrt.xyz"
       securityContext:
         fsGroup: 991
-        fsGroupChangePolicy: "OnRootMismatch"
 
       initContainers:
         # 1. Install S3 Lib

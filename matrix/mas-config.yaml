@@ -16,15 +16,14 @@ data:
             - name: assets
           binds:
             - address: "0.0.0.0:8080"
-            - address: "127.0.0.1:8080"
-      public_base: "http://mas:8080/"
+      public_base: "https://matrix-auth.kbrt.xyz/"
 
     database:
       uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
 
     telemetry:
       tracing: { enabled: false }
-      logging: { level: "debug" }
+      logging: { level: "info" }
 
     upstream_oauth2:
       providers:
