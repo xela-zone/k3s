@@ -62,8 +62,11 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-          command: ["/usr/local/bin/mas-cli"]
-          args: ["server", "--config", "/data/config.yaml"]
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cat /data/config.yaml
+              /usr/local/bin/mas-cli server --config /data/config.yaml
           ports:
             - containerPort: 8080
               name: http
