@@ -1,0 +1,60 @@
+# Element Server Suite (ESS) Values
+global:
+  domain: kbrt.xyz
+  externalProxy:
+    use: true
+    matrixBaseUrl: https://matrix.kbrt.xyz
+    elementWebBaseUrl: https://chat.kbrt.xyz
+
+# --- Components ---
+synapse:
+  enabled: true
+  config:
+    serverName: kbrt.xyz
+
+mas:
+  enabled: true
+  config:
+    publicBaseUrl: https://matrix.kbrt.xyz/
+    upstreamOidc:
+      issuer: "https://id.kbrt.xyz/application/o/matrix/"
+      clientIdSecretName: matrix-secrets
+      clientIdSecretKey: OIDC_CLIENT_ID
+      clientSecretSecretName: matrix-secrets
+      clientSecretSecretKey: OIDC_CLIENT_SECRET
+
+# --- Infrastructure ---
+postgresql:
+  enabled: false
+
+externalPostgres:
+  host: matrix-db-rw.matrix.svc
+  port: 5432
+  database: synapse
+  user: synapse
+  existingSecret: matrix-db-app
+  existingSecretKey: password
+
+media_repository:
+  s3:
+    enabled: true
+    bucket: "assets-6a939b"
+    region: "us-west-004"
+    endpoint: "https://s3.us-west-004.backblazeb2.com"
+    existingSecret: backblaze-app-key-secret
+    accessKeySecretKey: username
+    secretKeySecretKey: password
+    public_baseurl: "https://assets.kbrt.xyz/"
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - host: matrix.kbrt.xyz
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: chat.kbrt.xyz
+      paths:
+        - path: /
+          pathType: Prefix

@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: matrix-stack
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://element-hq.github.io/ess-helm
+      chart: element-kubernetes
+      targetRevision: 1.0.0
+      helm:
+        valueFiles:
+          - $values/matrix/values.yaml
+    - repoURL: https://github.com/xela-zone/k3s.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: matrix
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
