@@ -1,60 +1,49 @@
 # Element Server Suite (ESS) Official Values v26.2.0
-global:
-  serverName: "kbrt.xyz"
-  hostnames:
-    synapse: "matrix.kbrt.xyz"
-    matrixAuthenticationService: "matrix-auth.kbrt.xyz"
-    matrixRTC: "matrix-calls.kbrt.xyz"
-    elementWeb: "chat.kbrt.xyz"
-    elementAdmin: "matrix-admin.kbrt.xyz"
+serverName: "kbrt.xyz"
 
-# Synapse Configuration
+# Synapse
 synapse:
+  ingress:
+    host: "matrix.kbrt.xyz"
   postgres:
     host: matrix-db-rw.matrix.svc
     port: 5432
-    database: synapse
     user: synapse
-    existingSecret: matrix-db-app
-    existingSecretKey: password
-  media:
-    s3:
-      enabled: true
-      bucket: "assets-6a939b"
-      region: "us-west-004"
-      endpoint: "https://s3.us-west-004.backblazeb2.com"
-      existingSecret: backblaze-app-key-secret
-      accessKeySecretKey: username
-      secretKeySecretKey: password
-      publicBaseUrl: "https://assets.kbrt.xyz/"
+    password:
+      secretName: matrix-db-app
+      secretKey: password
+    database: synapse
+    sslMode: prefer
 
 # Matrix Authentication Service (MAS)
 matrixAuthenticationService:
+  ingress:
+    host: "matrix-auth.kbrt.xyz"
   postgres:
     host: matrix-db-rw.matrix.svc
     port: 5432
-    database: synapse # MAS can share DB if needed, but usually wants its own. 
-    # I'll use 'synapse' for now since I only have one DB cluster initialized.
     user: synapse
-    existingSecret: matrix-db-app
-    existingSecretKey: password
-
-# Upstream OIDC (Authentik)
-authentication:
-  oidc:
-    - id: authentik
-      issuer: "https://id.kbrt.xyz/application/o/matrix/"
-      clientIdSecretName: matrix-secrets
-      clientIdSecretKey: OIDC_CLIENT_ID
-      clientSecretSecretName: matrix-secrets
-      clientSecretSecretKey: OIDC_CLIENT_SECRET
+    password:
+      secretName: matrix-db-app
+      secretKey: password
+    database: synapse
+    sslMode: prefer
 
 # Element Web
 elementWeb:
-  # config keys might have changed, keeping it simple
-  {}
+  ingress:
+    host: "chat.kbrt.xyz"
 
-# Ingress Configuration
+# Element Admin
+elementAdmin:
+  ingress:
+    host: "matrix-admin.your.tld"
+
+# Matrix RTC
+matrixRTC:
+  ingress:
+    host: "matrix-calls.your.tld"
+
+# Ingress Global Config
 ingress:
-  annotations:
-    kubernetes.io/ingress.class: traefik
+  ingressClassName: traefik
