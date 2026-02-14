@@ -6,44 +6,32 @@ synapse:
   ingress:
     host: "matrix.kbrt.xyz"
   postgres:
-    host: matrix-db-rw.matrix.svc
+    host: "matrix-db-rw.matrix.svc"
     port: 5432
-    user: synapse
-    password:
-      secretName: matrix-db-app
-      secretKey: password
-    database: synapse
-    sslMode: prefer
+    user: "synapse"
+    database: "synapse"
+    sslMode: "prefer"
+    # Try different secret name key
+    existingSecret: "matrix-db-app"
 
 # Matrix Authentication Service (MAS)
 matrixAuthenticationService:
   ingress:
     host: "matrix-auth.kbrt.xyz"
   postgres:
-    host: matrix-db-rw.matrix.svc
+    host: "matrix-db-rw.matrix.svc"
     port: 5432
-    user: synapse
-    password:
-      secretName: matrix-db-app
-      secretKey: password
-    database: synapse
-    sslMode: prefer
+    user: "synapse"
+    database: "synapse"
+    sslMode: "prefer"
+    existingSecret: "matrix-db-app"
 
 # Element Web
 elementWeb:
   ingress:
     host: "chat.kbrt.xyz"
 
-# Element Admin
-elementAdmin:
-  ingress:
-    host: "matrix-admin.your.tld"
-
-# Matrix RTC
-matrixRTC:
-  ingress:
-    host: "matrix-calls.your.tld"
-
 # Ingress Global Config
 ingress:
-  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
