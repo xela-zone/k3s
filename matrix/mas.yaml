@@ -42,7 +42,7 @@ spec:
                 # Clean up any potential \r from 1Password/Windows sync
                 tr -d '\r' < /secrets/matrix/MAS_OIDC_KEY > /data/oidc.key
                 chmod 644 /data/oidc.key
-                echo "OIDC key processed."
+                echo "OIDC key processed. Hash: $(md5sum /data/oidc.key | awk '{print $1}')"
               else
                 echo "ERROR: /secrets/matrix/MAS_OIDC_KEY not found!"
                 exit 1
@@ -86,6 +86,11 @@ spec:
         - name: debug
           image: nicolaka/netshoot
           command: ["/bin/sh", "-c", "sleep infinity"]
+          volumeMounts:
+            - name: generated-config
+              mountPath: /data
+            - name: matrix-secrets
+              mountPath: /secrets/matrix
 
       volumes:
         - name: config-template
