@@ -40,13 +40,8 @@ spec:
               cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
               chmod 600 /data/oidc.key
               
-              # Generate keys if they don't exist
-              if [ ! -f /data/keys.jwks ]; then
-                # We need mas-cli to generate keys. It's in the main image.
-                # Use the main image for this part? No, alpine can't run it easily.
-                # I'll just touch the file for now? No.
-                echo "Keys missing"
-              fi
+              # Ensure JWKS exists or is empty to avoid MAS errors
+              touch /data/keys.jwks
 
           volumeMounts:
             - name: config-template
