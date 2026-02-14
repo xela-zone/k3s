@@ -16,6 +16,11 @@ data:
           binds:
             - address: "0.0.0.0:8080"
       public_base: "https://matrix-auth.kbrt.xyz/"
+      assets:
+        path: "/usr/local/share/mas-cli/assets"
+      templates:
+        path: "/usr/local/share/mas-cli/templates"
+      cors:
 
     database:
       uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
