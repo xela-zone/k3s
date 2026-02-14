@@ -12,9 +12,7 @@ synapse:
     database: "synapse"
     sslMode: "prefer"
     password:
-      secretKeyRef:
-        name: "matrix-stack-postgres"
-        passwordKey: "password"
+      value: "P5sYQ1eOCRpZtjN3XE7ni84IjNrBVGfSDNQU5oNz40glsVHFywt1CfURWowVQzNa"
   # S3 Media Offload
   media:
     s3:
@@ -38,9 +36,7 @@ matrixAuthenticationService:
     database: "synapse"
     sslMode: "prefer"
     password:
-      secretKeyRef:
-        name: "matrix-stack-postgres"
-        passwordKey: "password"
+      value: "P5sYQ1eOCRpZtjN3XE7ni84IjNrBVGfSDNQU5oNz40glsVHFywt1CfURWowVQzNa"
 
 # Upstream OIDC (Authentik)
 authentication:
