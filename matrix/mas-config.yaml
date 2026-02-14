@@ -37,8 +37,8 @@ data:
           token_endpoint_auth_method: client_secret_post
 
     matrix:
-      homeserver: "https://matrix.kbrt.xyz"
-      server_name: "kbrt.xyz"
+      homeserver: "kbrt.xyz"
+      endpoint: "http://matrix:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
     secrets:
