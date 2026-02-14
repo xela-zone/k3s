@@ -35,10 +35,13 @@ data:
     password_config:
       enabled: false
 
-    # Matrix Authentication Service (Delegated Auth) - Using hostAlias for internal routing
+    # Matrix Authentication Service (Delegated Auth)
     matrix_authentication_service:
       enabled: true
-      issuer: "http://matrix-auth.kbrt.xyz/"
+      # Logical issuer (Public HTTPS URL)
+      issuer: "https://matrix-auth.kbrt.xyz/"
+      # Physical endpoint (Internal HTTP URL)
+      endpoint: "http://mas:8080/"
       client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
       client_auth_method: client_secret_post
       secret: "MACAROON_SECRET_PLACEHOLDER"
