@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://element-hq.github.io/ess-helm
-      chart: element-kubernetes
+    - repoURL: ghcr.io/element-hq/ess-helm
+      chart: matrix-stack
       targetRevision: 1.0.0
       helm:
         valueFiles:

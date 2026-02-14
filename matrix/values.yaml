@@ -1,4 +1,4 @@
-# Element Server Suite (ESS) Values
+# Element Server Suite (ESS) Official Values
 global:
   domain: kbrt.xyz
   externalProxy:
@@ -15,13 +15,27 @@ synapse:
 mas:
   enabled: true
   config:
-    publicBaseUrl: https://matrix.kbrt.xyz/
+    publicBaseUrl: https://auth.kbrt.xyz/
+    # Upstream OIDC (Authentik)
     upstreamOidc:
       issuer: "https://id.kbrt.xyz/application/o/matrix/"
       clientIdSecretName: matrix-secrets
       clientIdSecretKey: OIDC_CLIENT_ID
       clientSecretSecretName: matrix-secrets
       clientSecretSecretKey: OIDC_CLIENT_SECRET
+
+element-web:
+  enabled: true
+  config:
+    brand: "KBRT Chat"
+
+# Element Admin Console
+element-admin:
+  enabled: true
+
+# Matrix RTC (Element Call)
+mrtc:
+  enabled: true
 
 # --- Infrastructure ---
 postgresql:
@@ -46,15 +60,20 @@ media_repository:
     secretKeySecretKey: password
     public_baseurl: "https://assets.kbrt.xyz/"
 
+# Ingress Configuration (Traefik)
 ingress:
   enabled: true
   ingressClassName: traefik
   hosts:
     - host: matrix.kbrt.xyz
-      paths:
-        - path: /
-          pathType: Prefix
+      paths: [{path: /, pathType: Prefix}]
     - host: chat.kbrt.xyz
-      paths:
-        - path: /
-          pathType: Prefix
+      paths: [{path: /, pathType: Prefix}]
+    - host: auth.kbrt.xyz
+      paths: [{path: /, pathType: Prefix}]
+    - host: admin.kbrt.xyz
+      paths: [{path: /, pathType: Prefix}]
+    - host: mrtc.kbrt.xyz
+      paths: [{path: /, pathType: Prefix}]
+    - host: kbrt.xyz
+      paths: [{path: /, pathType: Prefix}]
