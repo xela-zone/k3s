@@ -85,6 +85,23 @@ spec:
         - name: matrix-secrets
           secret:
             secretName: matrix-secrets
+            items:
+              - key: SYNAPSE_REGISTRATION_SHARED_SECRET
+                path: SYNAPSE_REGISTRATION_SHARED_SECRET
+              - key: SYNAPSE_MACAROON_SECRET_KEY
+                path: SYNAPSE_MACAROON_SECRET_KEY
+              - key: OIDC_CLIENT_ID
+                path: OIDC_CLIENT_ID
+              - key: OIDC_CLIENT_SECRET
+                path: OIDC_CLIENT_SECRET
+              - key: SYNAPSE_SIGNING_KEY
+                path: SYNAPSE_SIGNING_KEY
+              - key: SLIDING_SYNC_SECRET
+                path: SLIDING_SYNC_SECRET
+              - key: MAS_ENCRYPTION_KEY
+                path: MAS_ENCRYPTION_KEY
+              - key: MAS_OIDC_KEY
+                path: MAS_OIDC_KEY
         - name: db-secret
           secret:
             secretName: matrix-db-app
