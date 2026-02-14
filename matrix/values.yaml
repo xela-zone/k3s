@@ -13,6 +13,17 @@ synapse:
     sslMode: "prefer"
     password:
       value: "PLACEHOLDER"
+  # S3 Media Offload
+  media:
+    s3:
+      enabled: true
+      bucket: "assets-6a939b"
+      region: "us-west-004"
+      endpoint: "https://s3.us-west-004.backblazeb2.com"
+      existingSecret: "backblaze-app-key-secret"
+      accessKeySecretKey: "username"
+      secretKeySecretKey: "password"
+      publicBaseUrl: "https://assets.kbrt.xyz/"
 
 # Matrix Authentication Service (MAS)
 matrixAuthenticationService:
@@ -22,10 +33,20 @@ matrixAuthenticationService:
     host: "matrix-db-rw.matrix.svc"
     port: 5432
     user: "synapse"
-    database: "mas" # DIFFERENT DB
+    database: "mas"
     sslMode: "prefer"
     password:
       value: "PLACEHOLDER"
+
+# Upstream OIDC (Authentik)
+authentication:
+  oidc:
+    - id: authentik
+      issuer: "https://id.kbrt.xyz/application/o/matrix/"
+      clientIdSecretName: "matrix-secrets"
+      clientIdSecretKey: "OIDC_CLIENT_ID"
+      clientSecretSecretName: "matrix-secrets"
+      clientSecretSecretKey: "OIDC_CLIENT_SECRET"
 
 # Element Web
 elementWeb:
