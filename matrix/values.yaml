@@ -12,7 +12,7 @@ synapse:
     database: "synapse"
     sslMode: "prefer"
     password:
-      secret: "matrix-db-app"
+      secret: "matrix-stack-postgres"
       secretKey: "password"
   # S3 Media Offload
   media:
@@ -34,10 +34,10 @@ matrixAuthenticationService:
     host: "matrix-db-rw.matrix.svc"
     port: 5432
     user: "synapse"
-    database: "synapse" # SHARE THE DATABASE
+    database: "synapse"
     sslMode: "prefer"
     password:
-      secret: "matrix-db-app"
+      secret: "matrix-stack-postgres"
       secretKey: "password"
 
 # Upstream OIDC (Authentik)
