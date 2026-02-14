@@ -42,12 +42,17 @@ data:
       endpoint: "http://matrix:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
+    # Encryption keys
     secrets:
       encryption: "ENCRYPTION_KEY_PLACEHOLDER"
       session: "SESSION_SECRET_PLACEHOLDER"
       keys:
         - kid: "01HBG9Y6B0ZEDAVZZV9TZPDZZZ"
           key_file: "/data/oidc.key"
+
+    # Disable local passwords
+    passwords:
+      enabled: false
 
     # End of config
 
