@@ -22,7 +22,7 @@ matrixAuthenticationService:
     host: "matrix-db-rw.matrix.svc"
     port: 5432
     user: "synapse"
-    database: "synapse"
+    database: "mas" # DIFFERENT DB
     sslMode: "prefer"
     password:
       value: "PLACEHOLDER"
@@ -32,8 +32,16 @@ elementWeb:
   ingress:
     host: "chat.kbrt.xyz"
 
+# Element Admin
+elementAdmin:
+  ingress:
+    host: "matrix-admin.kbrt.xyz"
+
+# Matrix RTC
+matrixRTC:
+  ingress:
+    host: "matrix-calls.kbrt.xyz"
+
 # Ingress Global Config
 ingress:
-  # ingressClassName is not allowed, so we leave it empty and hope for default
-  # or use annotations if allowed.
   {}
