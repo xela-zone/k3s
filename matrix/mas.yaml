@@ -68,7 +68,7 @@ spec:
 
       containers:
         - name: mas
-          image: ghcr.io/matrix-org/matrix-authentication-service:latest
+          image: ghcr.io/matrix-org/matrix-authentication-service:v0.11.0
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
