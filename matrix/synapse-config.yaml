@@ -44,6 +44,7 @@ data:
       secret: "MACAROON_SECRET_PLACEHOLDER"
       # Internal override to bypass SSL/Hairpin NAT issues
       introspection_endpoint: "http://mas:8080/oauth2/introspect"
+      jwks_uri: "http://mas:8080/oauth2/keys.json"
 
     # Media (S3)
     media_store_path: /data/media_store
