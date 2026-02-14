@@ -38,11 +38,13 @@ spec:
               # Copy the OIDC signing key from mounted secret volume
               # The secret keys are mounted as files in /secrets/matrix/
               cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
-              chmod 644 /data/oidc.key
               
               # Ensure JWKS exists or is empty to avoid MAS errors
               touch /data/keys.jwks
-              chmod 644 /data/config.yaml /data/keys.jwks
+              
+              # Set ownership and permissions for MAS user (UID 1000)
+              chown -R 1000:1000 /data
+              chmod 644 /data/config.yaml /data/keys.jwks /data/oidc.key
 
           volumeMounts:
             - name: config-template
@@ -57,6 +59,9 @@ spec:
       containers:
         - name: mas
           image: ghcr.io/matrix-org/matrix-authentication-service:latest
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
           env:
             - name: MAS_CONFIG
               value: "/data/config.yaml"
