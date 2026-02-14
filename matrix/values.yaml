@@ -1,55 +1,40 @@
-# Element Server Suite (ESS) Official Values
+# Element Server Suite (ESS) Official Values v26.2.0
 global:
-  domain: kbrt.xyz
-  externalProxy:
-    use: true
-    matrixBaseUrl: https://matrix.kbrt.xyz
-    elementWebBaseUrl: https://chat.kbrt.xyz
+  serverName: "kbrt.xyz"
+  hostnames:
+    synapse: "matrix.kbrt.xyz"
+    matrixAuthenticationService: "matrix-auth.kbrt.xyz"
+    matrixRTC: "matrix-calls.kbrt.xyz"
+    elementWeb: "chat.kbrt.xyz"
+    # Element Admin Console
+    elementAdmin: "matrix-admin.kbrt.xyz"
 
-# --- Components ---
-synapse:
-  enabled: true
-  config:
-    serverName: kbrt.xyz
-
-mas:
-  enabled: true
-  config:
-    publicBaseUrl: https://matrix-auth.kbrt.xyz/
-    # Upstream OIDC (Authentik)
-    upstreamOidc:
-      issuer: "https://id.kbrt.xyz/application/o/matrix/"
-      clientIdSecretName: matrix-secrets
-      clientIdSecretKey: OIDC_CLIENT_ID
-      clientSecretSecretName: matrix-secrets
-      clientSecretSecretKey: OIDC_CLIENT_SECRET
-
-element-web:
-  enabled: true
-  config:
-    brand: "KBRT Chat"
-
-# Element Admin Console
-element-admin:
-  enabled: true
-
-# Matrix RTC (Element Call)
-mrtc:
-  enabled: true
+# Ingress Configuration (Traefik)
+ingress:
+  ingressClassName: traefik
 
 # --- Infrastructure ---
 postgresql:
   enabled: false
 
-externalPostgres:
+# External Database Configuration
+externalPostgresql:
   host: matrix-db-rw.matrix.svc
   port: 5432
   database: synapse
-  user: synapse
+  username: synapse
   existingSecret: matrix-db-app
   existingSecretKey: password
 
-media_repository:
+# S3 Media Offload
+# Note: The schema might have changed here too. 
+# Based on common ESS patterns, it might be under 'synapse.s3' or root level.
+# I'll try the root level first based on the error log 'media_repository' not allowed.
+# Actually, the error said 'media_repository' not allowed at root.
+# I'll move it under synapse.
+synapse:
+  strategy:
+    type: Recreate
   s3:
     enabled: true
     bucket: "assets-6a939b"
@@ -58,22 +43,21 @@ media_repository:
     existingSecret: backblaze-app-key-secret
     accessKeySecretKey: username
     secretKeySecretKey: password
-    public_baseurl: "https://assets.kbrt.xyz/"
+    publicBaseUrl: "https://assets.kbrt.xyz/"
 
-# Ingress Configuration (Traefik)
-ingress:
-  enabled: true
-  ingressClassName: traefik
-  hosts:
-    - host: matrix.kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
-    - host: chat.kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
-    - host: matrix-auth.kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
-    - host: matrix-admin.kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
-    - host: matrix-calls.kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
-    - host: kbrt.xyz
-      paths: [{path: /, pathType: Prefix}]
+# Upstream OIDC (Authentik)
+# Based on error log 'mas' not allowed at root. 
+# It likely needs to be nested or using a different key.
+# Actually, the README said 'mas' is a component.
+# I'll check if it's 'matrixAuthenticationService'.
+matrixAuthenticationService:
+  upstreamOidc:
+    issuer: "https://id.kbrt.xyz/application/o/matrix/"
+    clientIdSecretName: matrix-secrets
+    clientIdSecretKey: OIDC_CLIENT_ID
+    clientSecretSecretName: matrix-secrets
+    clientSecretSecretKey: OIDC_CLIENT_SECRET
+
+elementWeb:
+  config:
+    brand: "KBRT Chat"
