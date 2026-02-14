@@ -24,7 +24,6 @@ spec:
               CLIENT_ID=$(cat /secrets/matrix/OIDC_CLIENT_ID)
               CLIENT_SECRET=$(cat /secrets/matrix/OIDC_CLIENT_SECRET)
               ENC_KEY=$(cat /secrets/matrix/MAS_ENCRYPTION_KEY)
-              # Reuse Macaroon secret for shared, session, etc.
               SHARED_SECRET=$(cat /secrets/matrix/SYNAPSE_MACAROON_SECRET_KEY)
               
               cp /config-template/config.yaml /data/config.yaml
@@ -36,7 +35,8 @@ spec:
               sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               sed -i "s|SESSION_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               
-              # Copy the OIDC signing key from 1Password secret
+              # Copy the OIDC signing key from mounted secret volume
+              # The secret keys are mounted as files in /secrets/matrix/
               cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
               chmod 600 /data/oidc.key
               
@@ -85,6 +85,7 @@ spec:
         - name: matrix-secrets
           secret:
             secretName: matrix-secrets
+            # Maps secret keys to filenames in the mounted volume
             items:
               - key: SYNAPSE_REGISTRATION_SHARED_SECRET
                 path: SYNAPSE_REGISTRATION_SHARED_SECRET
