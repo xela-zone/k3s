@@ -16,7 +16,8 @@ data:
             - name: assets
           binds:
             - address: "0.0.0.0:8080"
-      public_base: "https://matrix-auth.kbrt.xyz/"
+            - address: "127.0.0.1:8080"
+      public_base: "http://mas:8080/"
 
     database:
       uri: "postgres://mas:DB_PASSWORD_PLACEHOLDER@matrix-db-rw.matrix.svc/mas"
