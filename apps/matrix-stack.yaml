@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: ghcr.io/element-hq/ess-helm
       chart: matrix-stack
-      targetRevision: 26.2.0
+      targetRevision: 26.2.1
       helm:
         valueFiles:
           - $values/matrix/values.yaml
