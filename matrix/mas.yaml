@@ -35,11 +35,10 @@ spec:
               sed -i "s|MAS_SHARED_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               sed -i "s|SESSION_SECRET_PLACEHOLDER|$SHARED_SECRET|g" /data/config.yaml
               
-              # Copy the OIDC signing key from mounted secret volume
-              # The secret keys are mounted as files in /secrets/matrix/
-              cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
+              # Copy the OIDC signing key and clean up whitespace
+              tr -d '\r' < /secrets/matrix/MAS_OIDC_KEY > /data/oidc.key
               
-              # Ensure JWKS exists or is empty to avoid MAS errors
+              # Ensure JWKS exists
               touch /data/keys.jwks
               
               # Set ownership and permissions for MAS user (UID 1000)
