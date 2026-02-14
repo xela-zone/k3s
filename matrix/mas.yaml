@@ -39,10 +39,14 @@ spec:
               
               echo "Processing OIDC key..."
               if [ -f /secrets/matrix/MAS_OIDC_KEY ]; then
-                # Clean up any potential \r from 1Password/Windows sync
-                tr -d '\r' < /secrets/matrix/MAS_OIDC_KEY > /data/oidc.key
+                # Clean up and re-format to valid PEM (newlines every 64 chars)
+                # First, remove header/footer and any existing whitespace
+                RAW_KEY=$(cat /secrets/matrix/MAS_OIDC_KEY | sed 's/-----BEGIN PRIVATE KEY-----//g' | sed 's/-----END PRIVATE KEY-----//g' | tr -d '[:space:]')
+                echo "-----BEGIN PRIVATE KEY-----" > /data/oidc.key
+                echo "$RAW_KEY" | fold -w 64 >> /data/oidc.key
+                echo "-----END PRIVATE KEY-----" >> /data/oidc.key
                 chmod 644 /data/oidc.key
-                echo "OIDC key processed. Hash: $(md5sum /data/oidc.key | awk '{print $1}')"
+                echo "OIDC key formatted."
               else
                 echo "ERROR: /secrets/matrix/MAS_OIDC_KEY not found!"
                 exit 1
