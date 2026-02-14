@@ -38,10 +38,11 @@ spec:
               # Copy the OIDC signing key from mounted secret volume
               # The secret keys are mounted as files in /secrets/matrix/
               cp /secrets/matrix/MAS_OIDC_KEY /data/oidc.key
-              chmod 600 /data/oidc.key
+              chmod 644 /data/oidc.key
               
               # Ensure JWKS exists or is empty to avoid MAS errors
               touch /data/keys.jwks
+              chmod 644 /data/config.yaml /data/keys.jwks
 
           volumeMounts:
             - name: config-template
