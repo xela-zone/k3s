@@ -17,6 +17,9 @@ spec:
         - ip: "10.43.226.108"
           hostnames:
             - "matrix-auth.kbrt.xyz"
+        - ip: "10.43.215.161"
+          hostnames:
+            - "localhost"
       securityContext:
         fsGroup: 991
 

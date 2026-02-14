@@ -39,6 +39,7 @@ data:
     matrix_authentication_service:
       enabled: true
       issuer: "https://matrix-auth.kbrt.xyz/"
+      discovery_url: "http://mas.matrix.svc.cluster.local:8080/.well-known/openid-configuration"
       client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
       client_auth_method: client_secret_basic
       secret: "MACAROON_SECRET_PLACEHOLDER"
