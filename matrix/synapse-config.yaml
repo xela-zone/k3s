@@ -35,17 +35,12 @@ data:
     password_config:
       enabled: false
 
-    # --- Discovery ---
-    extra_well_known_client_content:
-      "org.matrix.msc2965.authentication":
-        issuer: "https://matrix-auth.kbrt.xyz/"
-        account: "https://matrix-auth.kbrt.xyz/account"
-
     # Enable MSC3861 (Delegated Auth to MAS)
     experimental_features:
       msc3861:
         enabled: true
-        issuer: "https://matrix-auth.kbrt.xyz/"
+        # Use INTERNAL HTTP URL to avoid Hairpin NAT and SSL cert issues
+        issuer: "http://mas:8080/"
         client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
         client_auth_method: client_secret_post
         client_secret: "MACAROON_SECRET_PLACEHOLDER"

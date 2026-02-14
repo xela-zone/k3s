@@ -38,11 +38,9 @@ data:
 
     matrix:
       homeserver: "kbrt.xyz"
-      domain: "kbrt.xyz"
       endpoint: "http://matrix:80"
       secret: "MAS_SHARED_SECRET_PLACEHOLDER"
 
-    # Disable local passwords
     passwords:
       enabled: false
 

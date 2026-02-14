@@ -74,13 +74,6 @@ spec:
             httpGet: { path: /health, port: 8080 }
             initialDelaySeconds: 30
             periodSeconds: 30
-        
-        - name: debug
-          image: nicolaka/netshoot
-          command: ["/bin/sh", "-c", "sleep infinity"]
-          volumeMounts:
-            - name: generated-config
-              mountPath: /data
 
       volumes:
         - name: config-template
