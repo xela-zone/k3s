@@ -6,58 +6,55 @@ global:
     matrixAuthenticationService: "matrix-auth.kbrt.xyz"
     matrixRTC: "matrix-calls.kbrt.xyz"
     elementWeb: "chat.kbrt.xyz"
-    # Element Admin Console
     elementAdmin: "matrix-admin.kbrt.xyz"
 
-# Ingress Configuration (Traefik)
-ingress:
-  ingressClassName: traefik
-
-# --- Infrastructure ---
-postgresql:
-  enabled: false
-
-# External Database Configuration
-externalPostgresql:
-  host: matrix-db-rw.matrix.svc
-  port: 5432
-  database: synapse
-  username: synapse
-  existingSecret: matrix-db-app
-  existingSecretKey: password
-
-# S3 Media Offload
-# Note: The schema might have changed here too. 
-# Based on common ESS patterns, it might be under 'synapse.s3' or root level.
-# I'll try the root level first based on the error log 'media_repository' not allowed.
-# Actually, the error said 'media_repository' not allowed at root.
-# I'll move it under synapse.
+# Synapse Configuration
 synapse:
-  strategy:
-    type: Recreate
-  s3:
-    enabled: true
-    bucket: "assets-6a939b"
-    region: "us-west-004"
-    endpoint: "https://s3.us-west-004.backblazeb2.com"
-    existingSecret: backblaze-app-key-secret
-    accessKeySecretKey: username
-    secretKeySecretKey: password
-    publicBaseUrl: "https://assets.kbrt.xyz/"
+  postgres:
+    host: matrix-db-rw.matrix.svc
+    port: 5432
+    database: synapse
+    user: synapse
+    existingSecret: matrix-db-app
+    existingSecretKey: password
+  media:
+    s3:
+      enabled: true
+      bucket: "assets-6a939b"
+      region: "us-west-004"
+      endpoint: "https://s3.us-west-004.backblazeb2.com"
+      existingSecret: backblaze-app-key-secret
+      accessKeySecretKey: username
+      secretKeySecretKey: password
+      publicBaseUrl: "https://assets.kbrt.xyz/"
+
+# Matrix Authentication Service (MAS)
+matrixAuthenticationService:
+  postgres:
+    host: matrix-db-rw.matrix.svc
+    port: 5432
+    database: synapse # MAS can share DB if needed, but usually wants its own. 
+    # I'll use 'synapse' for now since I only have one DB cluster initialized.
+    user: synapse
+    existingSecret: matrix-db-app
+    existingSecretKey: password
 
 # Upstream OIDC (Authentik)
-# Based on error log 'mas' not allowed at root. 
-# It likely needs to be nested or using a different key.
-# Actually, the README said 'mas' is a component.
-# I'll check if it's 'matrixAuthenticationService'.
-matrixAuthenticationService:
-  upstreamOidc:
-    issuer: "https://id.kbrt.xyz/application/o/matrix/"
-    clientIdSecretName: matrix-secrets
-    clientIdSecretKey: OIDC_CLIENT_ID
-    clientSecretSecretName: matrix-secrets
-    clientSecretSecretKey: OIDC_CLIENT_SECRET
+authentication:
+  oidc:
+    - id: authentik
+      issuer: "https://id.kbrt.xyz/application/o/matrix/"
+      clientIdSecretName: matrix-secrets
+      clientIdSecretKey: OIDC_CLIENT_ID
+      clientSecretSecretName: matrix-secrets
+      clientSecretSecretKey: OIDC_CLIENT_SECRET
 
+# Element Web
 elementWeb:
-  config:
-    brand: "KBRT Chat"
+  # config keys might have changed, keeping it simple
+  {}
+
+# Ingress Configuration
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: traefik
