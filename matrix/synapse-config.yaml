@@ -38,13 +38,13 @@ data:
     # Matrix Authentication Service (Delegated Auth)
     matrix_authentication_service:
       enabled: true
-      # Logical issuer (Public HTTPS URL)
       issuer: "https://matrix-auth.kbrt.xyz/"
-      # Physical endpoint (Internal HTTP URL)
-      endpoint: "http://mas:8080/"
       client_id: 01HBG9Y6B0ZEDAVZZV9TZPDZZZ
       client_auth_method: client_secret_basic
       secret: "MACAROON_SECRET_PLACEHOLDER"
+      # Explicit internal overrides to bypass DNS/SSL issues
+      introspection_endpoint: "http://mas:8080/oauth2/introspect"
+      jwks_uri: "http://mas:8080/oauth2/keys.json"
 
     # Media (S3)
     media_store_path: /data/media_store
