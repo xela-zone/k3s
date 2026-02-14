@@ -26,7 +26,7 @@ spec:
       initContainers:
         # 1. Install S3 Lib
         - name: install-s3-lib
-          image: matrixdotorg/synapse:latest
+          image: matrixdotorg/synapse:latest@sha256:657cfa115c71701d188f227feb9d1c0fcd2213b26fcc1afd6c647ba333582634
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -38,7 +38,7 @@ spec:
 
         # 2. Build Config
         - name: config-builder
-          image: alpine:latest
+          image: alpine:latest@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -83,7 +83,7 @@ spec:
 
       containers:
         - name: synapse
-          image: matrixdotorg/synapse:latest
+          image: matrixdotorg/synapse:latest@sha256:657cfa115c71701d188f227feb9d1c0fcd2213b26fcc1afd6c647ba333582634
           args: ["run"]
           env:
             - name: PYTHONPATH
@@ -104,7 +104,7 @@ spec:
             periodSeconds: 30
         
         - name: sliding-sync
-          image: ghcr.io/matrix-org/sliding-sync:latest
+          image: ghcr.io/matrix-org/sliding-sync:latest@sha256:b940cab564355b15a604d5522d9db3615f889d8e9870989d8f17e189aecb4c18
           env:
             - name: SYNCV3_SERVER
               value: "http://localhost:8008"
