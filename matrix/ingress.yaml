@@ -9,6 +9,21 @@ spec:
     - host: matrix.kbrt.xyz
       http:
         paths:
+          # --- MAS Managed Routes on Matrix Domain ---
+          - path: /_matrix/client/v3/login
+            pathType: Prefix
+            backend: { service: { name: mas, port: { number: 8080 } } }
+          - path: /_matrix/client/v3/logout
+            pathType: Prefix
+            backend: { service: { name: mas, port: { number: 8080 } } }
+          - path: /_matrix/client/v3/refresh
+            pathType: Prefix
+            backend: { service: { name: mas, port: { number: 8080 } } }
+          - path: /_matrix/oidc
+            pathType: Prefix
+            backend: { service: { name: mas, port: { number: 8080 } } }
+          
+          # --- Synapse Managed Routes ---
           - path: /_matrix/client/unstable/org.matrix.msc3575/sync
             pathType: Prefix
             backend: { service: { name: matrix, port: { number: 8009 } } }
