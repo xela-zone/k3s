@@ -31,10 +31,8 @@ spec:
             LEAN_OIDC_CREATE_USER: "true"
             LEAN_OIDC_DEFAULT_ROLE: "40"
             LEAN_DEFAULT_TIMEZONE: "America/Anchorage"
-
-        # Deployment Strategy
-        strategy:
-          type: Recreate
+            LEAN_OIDC_FIELD_EMAIL: "email"
+            LEAN_OIDC_SCOPES: "openid profile email"
 
           # S3 Config (Backblaze B2)
           s3:
@@ -64,6 +62,10 @@ spec:
             # Fix for nil pointer in chart template
             overrides:
               fields: {}
+
+        # Deployment Strategy
+        strategy:
+          type: Recreate
 
         # Ingress (Disabled in chart, provided manually)
         ingress:
