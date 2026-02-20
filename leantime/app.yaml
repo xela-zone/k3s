@@ -12,9 +12,9 @@ spec:
     helm:
       values: |
         # Internal Database (MariaDB)
-        # We let the chart auto-generate the credentials and secret for this.
         internalDatabase:
           enabled: true
+          existingSecret: leantime-secrets # Expects keys: database-root, database-user, database-password
           persistence:
             enabled: true
             storageClass: longhorn
@@ -22,6 +22,7 @@ spec:
         
         leantime:
           url: https://tasks.kbrt.xyz
+          existingSecret: leantime-secrets # Expects key: session-salt
           
           # Debugging
           extraEnv:
