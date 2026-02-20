@@ -28,7 +28,10 @@ spec:
             hosts:
               - monitoring.moose-amberjack.ts.net
             path: /
-            pathType: ImplementationSpecific
+            pathType: Prefix
+            tls:
+              - hosts:
+                  - monitoring.moose-amberjack.ts.net
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
