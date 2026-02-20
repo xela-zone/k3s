@@ -51,13 +51,9 @@ spec:
             overrides:
               fields: {}
 
-        # Ingress
+        # Ingress (Disabled in chart, provided manually)
         ingress:
-          enabled: true
-          className: traefik
-          host: tasks.kbrt.xyz
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          enabled: false
         
         # Persistence for user files
         persistence:
