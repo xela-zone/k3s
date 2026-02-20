@@ -132,3 +132,20 @@ The 1Password operator in this cluster (v1.11.0+) creates Kubernetes Secrets whe
 *   **Best Practice:** If an application requires specific secret keys (e.g., `AWS_ACCESS_KEY_ID`), **instruct the user to rename the fields directly in the 1Password item** to match the required keys. This is the only supported way to achieve custom keys.
 *   **Longhorn S3 Backups:** Require `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINTS`, and `AWS_REGION` keys in the secret. The `backupTarget` URL should also follow the format `s3://bucket@region/path/`.
 *   **Longhorn Replicas:** Since this is a single-node cluster, all volumes MUST be configured with `numberOfReplicas: 1`. The global `defaultReplicaCount` is also set to `1`.
+
+### Leantime Deployment
+*   **OIDC Configuration:**
+    *   **Slug:** `lean-time` (Required for correct Issuer matching in Authentik).
+    *   **Env Vars:** Requires explicit mapping for `LEAN_OIDC_CREATE_USER: "true"` and `LEAN_OIDC_DEFAULT_ROLE: "40"`.
+    *   **Field Mapping:** Explicitly map email with `LEAN_OIDC_FIELD_EMAIL: "email"`.
+    *   **Trusted Proxies:** Leantime defaults to trusting `127.0.0.1`. The "Not a trusted proxy" (403) error is often a red herring for other configuration or health check failures.
+*   **Database:**
+    *   **Stable Secrets:** Must use an existing Secret (via 1Password) for `database-root`, `database-user`, `database-password`. Relying on the chart's auto-generated secrets causes password rotation on every Argo CD sync, breaking the connection to the persisted volume.
+*   **RWO Volume Locking (Important):**
+    *   Since Leantime uses a ReadWriteOnce (RWO) volume for the database on a single-node cluster, **RollingUpdate strategies fail** because the old pod holds the volume lock while the new pod tries to start.
+    *   **Fix:** Use `strategy: { type: Recreate }` in the Deployment/Helm values to ensure the old pod terminates fully before the new one starts.
+
+## Tool Usage & Safety
+
+### kubectl
+*   **NEVER use the `-w` (watch) flag:** Executing `kubectl get ... -w` causes the agent to hang indefinitely as the stream never closes. Always use standard `get` commands or `sleep` loops for status checks.
