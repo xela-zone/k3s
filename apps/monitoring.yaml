@@ -28,6 +28,7 @@ spec:
             hosts:
               - monitoring.moose-amberjack.ts.net
             path: /
+            servicePort: http-web
   destination:
     server: https://kubernetes.default.svc
     namespace: metrics
