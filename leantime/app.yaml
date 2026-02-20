@@ -23,6 +23,13 @@ spec:
         leantime:
           url: https://tasks.kbrt.xyz
           
+          # Debugging
+          extraEnv:
+            - name: LEAN_DEBUG
+              value: "1"
+            - name: LEAN_OIDC_DEBUG
+              value: "1"
+
           # S3 Config (Backblaze B2)
           s3:
             enabled: true
@@ -45,7 +52,7 @@ spec:
           # OIDC Config
           oidc:
             enabled: true
-            providerUrl: https://id.kbrt.xyz/application/o/lean-time/.well-known/openid-configuration
+            providerUrl: https://id.kbrt.xyz/application/o/lean-time/
             existingSecret: leantime-secrets # Expects keys: oidc-client-id, oidc-client-secret
             # Fix for nil pointer in chart template
             overrides:
