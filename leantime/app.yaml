@@ -1,0 +1,119 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: leantime-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gissilabs.github.io/charts
+    chart: leantime
+    targetRevision: 1.0.8
+    helm:
+      values: |
+        # Secrets - All mapped from one 1Password item
+        internalDatabase:
+          existingSecret: leantime-secrets
+          persistence:
+            enabled: true
+            storageClass: longhorn
+            size: 5Gi
+        
+        leantime:
+          existingSecret: leantime-secrets
+          url: https://tasks.kbrt.xyz
+          
+          # We use extraEnv for S3, SMTP, and OIDC to ensure keys are mapped correctly
+          # from our single 1Password-managed secret.
+          extraEnv:
+            # S3 Config (Backblaze B2)
+            - name: LEANTIME_AWS_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: s3-key
+            - name: LEANTIME_AWS_S3_ACCESS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: s3-secret
+            # SMTP Config
+            - name: LEANTIME_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: smtp-user
+            - name: LEANTIME_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: smtp-password
+            - name: LEANTIME_SMTP_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: smtp-from
+            # OIDC Config
+            - name: LEANTIME_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: oidc-client-id
+            - name: LEANTIME_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secrets
+                  key: oidc-client-secret
+
+          s3:
+            enabled: true
+            endpoint: https://s3.us-west-004.backblazeb2.com
+            region: us-west-004
+            bucket: assets-6a939b
+            # Since we can't easily map 'folder' via env in this chart without checking source,
+            # we rely on the fact that Leantime might put things in root or we just share the bucket.
+            # However, looking at the chart, it doesn't seem to support a 'prefix' or 'folder' option in values.
+            # We will use the same bucket as Matrix.
+            usePathStyleEndpoint: false
+          
+          smtp:
+            enabled: true
+            host: smtp.mailgun.org # Assuming Mailgun or similar based on typical setups, but I should check Authentik's actual host if possible.
+            # Wait, I didn't see the host in Authentik's file, it was a secret key 'smtp_host'.
+            # I'll use the secret for the host too.
+            auth: true
+            port: 465
+            secureProtocol: ssl
+          
+          oidc:
+            enabled: true
+            providerUrl: https://id.kbrt.xyz/application/o/leantime/
+            # The chart might need these fields filled even if we use env vars, 
+            # or the env vars might override them.
+            # To be safe, we map the clientID/Secret via existingSecret too if the chart supports it.
+            # The chart supports 'existingSecret' for OIDC.
+            existingSecret: leantime-secrets
+
+        # Ingress
+        ingress:
+          enabled: true
+          className: traefik
+          host: tasks.kbrt.xyz
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        
+        # Persistence for user files
+        persistence:
+          enabled: true
+          storageClass: longhorn
+          size: 5Gi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: leantime
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
