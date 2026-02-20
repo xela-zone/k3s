@@ -30,7 +30,11 @@ spec:
             LEAN_OIDC_DEBUG: "1"
             LEAN_OIDC_CREATE_USER: "true"
             LEAN_OIDC_DEFAULT_ROLE: "40"
-            LEAN_TRUSTED_PROXIES: "127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+            LEAN_DEFAULT_TIMEZONE: "America/Anchorage"
+
+        # Deployment Strategy
+        strategy:
+          type: Recreate
 
           # S3 Config (Backblaze B2)
           s3:
