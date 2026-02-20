@@ -48,25 +48,12 @@ spec:
             providerUrl: https://id.kbrt.xyz/application/o/leantime/
             existingSecret: leantime-secrets # Expects keys: oidc-client-id, oidc-client-secret
             # Fix for nil pointer in chart template
-            overrides:
-              fields: {}
+    overrides:
+      fields: {}
 
-          # Environment variable overrides for things not covered by existingSecret
-          extraEnv:
-            - name: LEANTIME_SMTP_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: leantime-secrets
-                  key: smtp-host
-            - name: LEANTIME_SMTP_FROM
-              valueFrom:
-                secretKeyRef:
-                  name: leantime-secrets
-                  key: smtp-from
+ingress:
+  enabled: true
 
-        # Ingress
-        ingress:
-          enabled: true
           className: traefik
           host: tasks.kbrt.xyz
           annotations:
