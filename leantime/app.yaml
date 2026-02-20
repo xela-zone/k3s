@@ -48,12 +48,12 @@ spec:
             providerUrl: https://id.kbrt.xyz/application/o/leantime/
             existingSecret: leantime-secrets # Expects keys: oidc-client-id, oidc-client-secret
             # Fix for nil pointer in chart template
-    overrides:
-      fields: {}
+            overrides:
+              fields: {}
 
-ingress:
-  enabled: true
-
+        # Ingress
+        ingress:
+          enabled: true
           className: traefik
           host: tasks.kbrt.xyz
           annotations:
