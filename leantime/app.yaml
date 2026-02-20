@@ -28,7 +28,7 @@ spec:
           extraEnv:
             LEAN_DEBUG: "1"
             LEAN_OIDC_DEBUG: "1"
-            LEAN_OIDC_AUTO_CREATE_USER: "true"
+            LEAN_OIDC_CREATE_USER: "true"
 
           # S3 Config (Backblaze B2)
           s3:
