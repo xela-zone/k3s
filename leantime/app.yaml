@@ -25,10 +25,8 @@ spec:
           
           # Debugging
           extraEnv:
-            - name: LEAN_DEBUG
-              value: "1"
-            - name: LEAN_OIDC_DEBUG
-              value: "1"
+            LEAN_DEBUG: "1"
+            LEAN_OIDC_DEBUG: "1"
 
           # S3 Config (Backblaze B2)
           s3:
