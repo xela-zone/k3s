@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://gissilabs.github.io/charts
     chart: leantime
-    targetRevision: 1.0.8
+    targetRevision: 1.3.0
     helm:
       values: |
         # Internal Database (MariaDB)
@@ -35,13 +35,8 @@ spec:
           # SMTP Config
           smtp:
             enabled: true
-            host: smtp.mailgun.org # We still need to provide a host, or map it if it's in the secret (chart doesn't map host from secret by default, only user/pass)
-            # Actually, the user's secret had smtp-host. The chart might not read it from secret automatically.
-            # Let's re-add the extraEnv for the things that existingSecret MIGHT not cover, 
-            # OR just map the host here if we know it.
-            # For safety, I'll keep the extraEnv for the host and from address if the chart doesn't support secret mapping for those.
-            # Checking values: existingSecret keys are 'smtp-user' and 'smtp-password'. 
-            # It does NOT cover 'host' or 'from'.
+            from: "Leantime <tasks@kbrt.xyz>"
+            host: smtp.fastmail.com
             auth: true
             port: 465
             secureProtocol: ssl
@@ -52,6 +47,9 @@ spec:
             enabled: true
             providerUrl: https://id.kbrt.xyz/application/o/leantime/
             existingSecret: leantime-secrets # Expects keys: oidc-client-id, oidc-client-secret
+            # Fix for nil pointer in chart template
+            overrides:
+              fields: {}
 
           # Environment variable overrides for things not covered by existingSecret
           extraEnv:
