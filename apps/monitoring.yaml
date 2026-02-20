@@ -22,19 +22,15 @@ spec:
             enabled: true
             ingressClassName: tailscale
             annotations:
-              tailscale.com/hostname: "grafana"
+              tailscale.com/hostname: "monitoring"
               tailscale.com/https: "true"
               tailscale.com/tags: "tag:deployment"
             hosts:
-              - grafana.moose-amberjack.ts.net
+              - monitoring.moose-amberjack.ts.net
             path: /
-            pathType: Prefix
-            tls:
-              - hosts:
-                  - grafana.moose-amberjack.ts.net
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: metrics
   syncPolicy:
     automated:
       prune: true
