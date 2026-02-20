@@ -68,6 +68,13 @@ spec:
                   key: smtp_password
 
         server:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 700Mi
+            limits:
+              cpu: 200m
+              memory: 1Gi
           ingress:
             enabled: true
             ingressClassName: tailscale
@@ -80,6 +87,15 @@ spec:
             tls:
               - hosts:
                   - id.kbrt.xyz
+
+        worker:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+            limits:
+              cpu: 300m
+              memory: 1Gi
 
   destination:
     server: https://kubernetes.default.svc

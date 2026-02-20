@@ -9,10 +9,26 @@ spec:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
     targetRevision: 82.2.0
+    helm:
+      valuesObject:
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
+            resources:
+              requests:
+                cpu: 300m
+                memory: 1600Mi
+              limits:
+                cpu: 500m
+                memory: 2Gi
         grafana:
+          resources:
+            requests:
+              cpu: 20m
+              memory: 350Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi
           dashboards:
             default:
               longhorn:

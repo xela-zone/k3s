@@ -77,6 +77,14 @@ spec:
           storageClass: longhorn
           size: 5Gi
 
+        resources:
+          requests:
+            cpu: 20m
+            memory: 256Mi
+          limits:
+            cpu: 200m
+            memory: 512Mi
+
   destination:
     server: https://kubernetes.default.svc
     namespace: leantime
