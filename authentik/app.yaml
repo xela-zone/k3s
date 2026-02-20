@@ -30,6 +30,10 @@ spec:
             port: 465
             use_ssl: true
 
+        prometheus:
+          serviceMonitor:
+            enabled: true
+
         global:
           env:
             - name: AUTHENTIK_SECRET_KEY

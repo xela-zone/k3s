@@ -11,8 +11,9 @@ spec:
     repoURL: https://charts.longhorn.io
     targetRevision: 1.11.0 # Use a specific version, check for latest stable
     chart: longhorn
-    helm:
-      values: |
+        metrics:
+          serviceMonitor:
+            enabled: true
         persistence:
           defaultClass: true
           defaultClassReplicaCount: 1
