@@ -30,8 +30,6 @@ spec:
             LEAN_OIDC_DEBUG: "1"
             LEAN_OIDC_CREATE_USER: "true"
             LEAN_OIDC_DEFAULT_ROLE: "40"
-            LEAN_OIDC_FIELD_EMAIL: "email"
-            LEAN_OIDC_SCOPES: "openid profile email"
             LEAN_DEFAULT_TIMEZONE: "America/Anchorage"
 
           # S3 Config (Backblaze B2)
