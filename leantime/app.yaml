@@ -45,7 +45,7 @@ spec:
           # OIDC Config
           oidc:
             enabled: true
-            providerUrl: https://id.kbrt.xyz/application/o/leantime/
+            providerUrl: https://id.kbrt.xyz/application/o/lean-time/.well-known/openid-configuration
             existingSecret: leantime-secrets # Expects keys: oidc-client-id, oidc-client-secret
             # Fix for nil pointer in chart template
             overrides:
