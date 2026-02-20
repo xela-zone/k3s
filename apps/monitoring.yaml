@@ -25,7 +25,6 @@ spec:
               tailscale.com/hostname: "monitoring"
               tailscale.com/https: "true"
               tailscale.com/tags: "tag:deployment"
-              tailscale.com/proxy-class: "https-proxy"
             hosts:
               - monitoring.moose-amberjack.ts.net
             path: /
