@@ -16,6 +16,7 @@ spec:
             tag: v1.11.0-hotfix-1
           instanceManager:
             tag: v1.11.0-hotfix-1
+        upgradeVersionCheck: false
         metrics:
           serviceMonitor:
             enabled: true
