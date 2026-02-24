@@ -9,8 +9,13 @@ spec:
   project: default
   source:
     repoURL: https://charts.longhorn.io
-    targetRevision: 1.11.0 # Use a specific version, check for latest stable
+    targetRevision: 1.11.0
     chart: longhorn
+        image:
+          manager:
+            tag: v1.11.0-hotfix-1
+          instanceManager:
+            tag: v1.11.0-hotfix-1
         metrics:
           serviceMonitor:
             enabled: true
