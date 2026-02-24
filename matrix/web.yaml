@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
         - name: element-web
-          image: vectorim/element-web:latest@sha256:827ae9ebea5ec0eeb487660f4f04e5789b666667f17a0d63b5c0e4ad8b9b9ca1
+          image: vectorim/element-web:latest@sha256:dd6696825002350e3fc7f6110ab9b4ebdf32b5c489fb195b74cff4cb1b87220a
           env:
             - { name: PORT, value: "80" }
             - { name: ELEMENT_WEB_PORT, value: "80" }
