@@ -58,7 +58,7 @@ spec:
 
       containers:
         - name: mas
-          image: ghcr.io/element-hq/matrix-authentication-service:latest@sha256:f4ef88a5dc5033a0b4869fceb10c198f0e5a8765c0e4a5abc42490be18d2e96c
+          image: ghcr.io/element-hq/matrix-authentication-service:latest@sha256:9304257da20e31c0f86eed767f46f8e198d339a852728e33cac008f1f6c1a655
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
