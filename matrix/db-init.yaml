@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: psql
-          image: postgres:17-alpine@sha256:f45469e6c408078412e20ac759530a28b752e201323f32b0bf04ec0f981037a5
+          image: postgres:18-alpine@sha256:b0ba6f2b6290ae40c9aacf6cc72849a2954778fef88774e122131d4b3c3b5e5b
           command: ["/bin/sh", "-c"]
           args:
             - |
