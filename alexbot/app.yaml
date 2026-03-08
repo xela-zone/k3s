@@ -21,9 +21,6 @@ spec:
             requests:
               cpu: 10m
               memory: 400Mi
-            limits:
-              cpu: 100m
-              memory: 800Mi
           env:
             - name: COBALT_URL
               value: http://cobalt-api:9000
