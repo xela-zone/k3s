@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
         - name: main-app-container
-          image: ghcr.io/xela-zone/alex-bot:latest@sha256:3bab193466c880c71538cdf82c1a4ed3da11ab8e1d4d10436338d97ea0005d56
+          image: ghcr.io/xela-zone/alex-bot:latest
           resources:
             requests:
               cpu: 10m
-              memory: 200Mi
+              memory: 400Mi
             limits:
               cpu: 100m
-              memory: 400Mi
+              memory: 800Mi
           env:
             - name: COBALT_URL
               value: http://cobalt-api:9000
