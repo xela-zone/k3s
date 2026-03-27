@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
         - name: actual-server
-          image: docker.io/actualbudget/actual-server:26.3.0
+          image: docker.io/actualbudget/actual-server:26.3.0@sha256:eb8bc26f53025e07e464594c12d77c52c4b95840c8dadd9b95c4f0c4660f8ad2
           resources:
             requests:
               cpu: 10m
