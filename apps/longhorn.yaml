@@ -9,13 +9,8 @@ spec:
   project: default
   source:
     repoURL: https://charts.longhorn.io
-    targetRevision: 1.11.0
+    targetRevision: 1.11.1
     chart: longhorn
-        image:
-          manager:
-            tag: v1.11.0-hotfix-1
-          instanceManager:
-            tag: v1.11.0-hotfix-1
         upgradeVersionCheck: false
         metrics:
           serviceMonitor:
@@ -29,8 +24,6 @@ spec:
           replicaAutoBalance: "least-effort"
           defaultReplicaCount: 1
           createDefaultDiskAndNode: true
-        preUpgradeChecker:
-          jobEnabled: false
         s3:
           endpoint: https://s3.us-west-004.backblazeb2.com
         serviceAccount:
