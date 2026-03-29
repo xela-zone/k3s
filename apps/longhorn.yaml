@@ -11,7 +11,6 @@ spec:
     repoURL: https://charts.longhorn.io
     targetRevision: 1.11.1
     chart: longhorn
-        upgradeVersionCheck: false
         metrics:
           serviceMonitor:
             enabled: true
