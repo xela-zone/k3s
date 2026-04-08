@@ -26,7 +26,7 @@ spec:
       initContainers:
         # 1. Install S3 Lib
         - name: install-s3-lib
-          image: matrixdotorg/synapse:latest@sha256:950271eb8700f6a7ca5947a3734164f32110fd31d2f5eef2828bf39a2f05cc21
+          image: matrixdotorg/synapse:latest@sha256:9d6bef0a269608d4422bbc5a39140f4a7f667802bcdac143eac0f41f80924dcf
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -83,7 +83,7 @@ spec:
 
       containers:
         - name: synapse
-          image: matrixdotorg/synapse:latest@sha256:950271eb8700f6a7ca5947a3734164f32110fd31d2f5eef2828bf39a2f05cc21
+          image: matrixdotorg/synapse:latest@sha256:9d6bef0a269608d4422bbc5a39140f4a7f667802bcdac143eac0f41f80924dcf
           args: ["run"]
           env:
             - name: PYTHONPATH
