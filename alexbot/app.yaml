@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: main-app-container
-          image: ghcr.io/xela-zone/alex-bot:v2.3.1
+          image: ghcr.io/xela-zone/alex-bot:v2.3.1@sha256:8aac5c42fabfade69c32023fe713b359baaa3ed3b366ddf252d98a510b1368ce
           resources:
             requests:
               cpu: 10m
