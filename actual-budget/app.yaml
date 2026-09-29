@@ -142,3 +142,22 @@ spec:
             name: actual-server
             port:
               number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: actual-ui-traefik
+  namespace: actual-budget
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: budget.kbrt.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: actual-server
+                port:
+                  number: 80
