@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":separateMajorReleases",
     ":combinePatchMinorReleases",
     "docker:pinDigests"
@@ -27,13 +27,13 @@
     }
   ],
   "kubernetes": {
-    "fileMatch": [
-      "\\.yaml$"
+    "managerFilePatterns": [
+      "/\\.yaml$/"
     ]
   },
   "argocd": {
-    "fileMatch": [
-      "apps/.+\\.yaml$"
+    "managerFilePatterns": [
+      "/apps/.+\\.yaml$/"
     ]
   },
   "platformAutomerge": true
