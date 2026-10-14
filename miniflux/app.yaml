@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miniflux
+  namespace: miniflux
+  labels:
+    app: miniflux
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: miniflux
+  template:
+    metadata:
+      labels:
+        app: miniflux
+    spec:
+      containers:
+        - name: miniflux
+          image: ghcr.io/miniflux/miniflux:2.3.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-db-app
+                  key: uri
+            - name: RUN_MIGRATIONS
+              value: "1"
+            - name: CREATE_ADMIN
+              value: "1"
+            - name: ADMIN_USERNAME
+              value: "xela"
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-admin
+                  key: password
+            - name: LISTEN_ADDR
+              value: "0.0.0.0:8080"
+            - name: BASE_URL
+              value: "https://rss.moose-amberjack.ts.net"
+            - name: POLLER_FREQUENCY
+              value: "60"
+            - name: METRICS_COLLECTOR
+              value: "1"
+            - name: METRICS_ALLOWED_NETWORKS
+              value: "10.42.0.0/16,127.0.0.1/32"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: miniflux
+  namespace: miniflux
+  labels:
+    app: miniflux
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: miniflux
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: miniflux
+  namespace: miniflux
+  annotations:
+    tailscale.com/hostname: "rss"
+    tailscale.com/https: "true"
+    tailscale.com/tags: "tag:deployment"
+    tailscale.com/proxy-class: "https-proxy"
+spec:
+  ingressClassName: tailscale
+  tls:
+    - hosts:
+        - rss.moose-amberjack.ts.net
+  rules:
+    - host: rss.moose-amberjack.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: miniflux
+                port:
+                  number: 80

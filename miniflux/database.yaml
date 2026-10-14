@@ -1,0 +1,94 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backblaze-b2-store
+  namespace: miniflux
+spec:
+  configuration:
+    data:
+      compression: gzip
+      jobs: 2
+    destinationPath: s3://k3s-backup-7cabee/miniflux-database-v1/
+    endpointURL: https://s3.us-west-004.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        key: username
+        name: backblaze-app-key-secret
+      secretAccessKey:
+        key: password
+        name: backblaze-app-key-secret
+    wal:
+      compression: gzip
+      maxParallel: 1
+  instanceSidecarConfiguration:
+    logLevel: info
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    retentionPolicyIntervalSeconds: 3600
+  retentionPolicy: 30d
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: miniflux-db
+  namespace: miniflux
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  bootstrap:
+    initdb:
+      database: miniflux
+      owner: miniflux
+  storage:
+    storageClass: longhorn-postgres
+    size: 5Gi
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backblaze-b2-store
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: miniflux-db-daily-backup
+  namespace: miniflux
+spec:
+  schedule: "0 5 * * *"
+  backupOwnerReference: cluster
+  cluster:
+    name: miniflux-db
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: backblaze-b2-store
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-secret-reader
+  namespace: miniflux
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["backblaze-app-key-secret"]
+  verbs: ["get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-secret-reader-binding
+  namespace: miniflux
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cnpg-secret-reader
+subjects:
+- kind: ServiceAccount
+  name: miniflux-db
