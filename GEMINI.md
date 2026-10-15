@@ -25,14 +25,12 @@ This repository hosts the GitOps configuration for a Kubernetes (k3s) cluster, m
 *   **`root-app.yaml`**: The "App of Apps" bootstrap manifest.
 *   **`apps/`**: The control plane for all cluster workloads.
     *   `argo-cd.yaml`: Self-management for Argo CD (v7.8.2+).
-    *   `actual-budget-app.yaml`: Manages the `actual-budget/` workload.
     *   `authentik-app.yaml`: Manages the `authentik/` workload.
     *   `cert-manager.yaml`: Managed cert-manager operator.
     *   `cloudflare.yaml`: Cloudflare Tunnel deployment.
     *   `cnpg.yaml`: Managed CloudNativePG operator.
     *   `matrix-app.yaml`: Manages the `matrix/` workload.
     *   `monitoring.yaml`: Managed Prometheus/Grafana stack.
-*   **`actual-budget/`**: Manifests for Actual Budget, using static PV binding.
 *   **`authentik/`**: Identity provider configuration (`app.yaml` with Helm values, `database.yaml`).
 *   **`matrix/`**: Synapse homeserver, Sliding Sync Proxy, and S3 configuration.
 *   **`tailscale/`**: Operator configuration and `ProxyClass` definitions.
